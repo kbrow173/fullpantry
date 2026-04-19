@@ -1,0 +1,94 @@
+FullPantry — Phase 5 (Grocery List) Manual Test Checklist
+==========================================================
+Test on your phone or in a mobile-sized browser window.
+Prerequisites: At least one recipe planned in the Planner for the next 7 days.
+
+─── GENERATE ───────────────────────────────────────────
+[ ] 1. Navigate to Groceries tab. Confirm empty state shows "No grocery lists yet."
+[ ] 2. Tap "Generate for next 7 days". Confirm button shows a loading state while generating.
+[ ] 3. After generation, confirm:
+        - List tab appears labeled with date range (e.g. "Apr 17 – Apr 23")
+        - Items are grouped into sections (PRODUCE, DAIRY & EGGS, MEAT & SEAFOOD, PANTRY STAPLES, etc.)
+        - Item names show the ingredient WITHOUT preparation notes
+          (e.g. "snow peas" not "snow peas, blanched and chilled")
+        - Section counts show "0/N" for each group
+[ ] 4. Tap "Generate for next 7 days" again. Confirm:
+        - Still shows "1 OF 3 LISTS" (not 2 of 3)
+        - Old list tab is replaced, not duplicated
+
+─── CATEGORIZATION ─────────────────────────────────────
+[ ] 5. Confirm common items are in the right section:
+        - Vegetables / fruits → PRODUCE
+        - Milk, butter, eggs → DAIRY & EGGS
+        - Chicken, beef, fish, shrimp → MEAT & SEAFOOD
+        - Pasta, rice, oil, spices, peanut butter → PANTRY STAPLES
+        - Bread, tortillas → BAKERY
+[ ] 6. Confirm "peanut butter" is in PANTRY STAPLES (not DAIRY & EGGS).
+[ ] 7. Confirm "salt" or "pepper" is in PANTRY STAPLES (not PRODUCE or BEVERAGES).
+
+─── CHECKING ITEMS ──────────────────────────────────────
+[ ] 8. Tap the circle on any unchecked item. Confirm:
+        - "Add to pantry" sheet slides up from bottom
+        - Sheet shows the item name and unit
+        - Sheet shows a quantity (defaulting to the grocery list quantity, or 1 if not parsed)
+        - "Add to pantry" button is fully visible ABOVE the bottom navigation bar
+[ ] 9. Tap "−" button to decrease quantity. Confirm it steps by 0.25 below 1, by 1 above 1.
+[ ] 10. Tap "+" button to increase quantity. Confirm it increments correctly.
+[ ] 11. Tap "Add to pantry". Confirm:
+        - Sheet closes
+        - Item shows as checked (filled circle, strikethrough text, grayed out)
+        - Section counter updates (e.g. "1/5")
+        - "X of Y items checked off" counter appears at the top
+[ ] 12. Navigate to Pantry tab. Confirm the item was added with the quantity you set.
+[ ] 13. Return to Groceries. Tap the checked item's circle again. Confirm:
+        - Item is unchecked (circle empty, text normal)
+        - No "Add to pantry" sheet appears (unchecking is immediate)
+
+─── MANUAL ADD ─────────────────────────────────────────
+[ ] 14. Tap the orange "+" FAB button (bottom right). Confirm add-item sheet slides up.
+[ ] 15. Tap "Add to list" with no name entered. Confirm nothing happens (button disabled).
+[ ] 16. Type a fruit name (e.g. "apples"). Confirm Section auto-detects as "Produce".
+[ ] 17. Type a different item (e.g. "butter"). Confirm Section auto-detects as "Dairy & Eggs".
+[ ] 18. Manually override the category by tapping a different section chip. Confirm selection updates.
+[ ] 19. Enter a quantity and unit. Tap "Add to list". Confirm:
+        - Sheet closes
+        - Item appears in the correct section
+        - Quantity and unit are included in the display
+[ ] 20. Tap Enter key after typing a name. Confirm item is added (keyboard shortcut).
+
+─── COLLAPSE ────────────────────────────────────────────
+[ ] 21. Tap any section header (e.g. PRODUCE). Confirm:
+        - Items collapse and are hidden
+        - Chevron rotates to point left
+        - Section count still shows correctly
+[ ] 22. Tap the same header again. Confirm items expand.
+
+─── DELETE ITEM ─────────────────────────────────────────
+[ ] 23. Long-press or hover over a list item. Confirm a trash icon appears on the right.
+[ ] 24. Tap the trash icon. Confirm item is removed immediately from the list.
+[ ] 25. (If you have network access to test rollback) Disconnect network, tap trash.
+        Confirm item disappears then reappears if the delete fails.
+
+─── MULTIPLE LISTS ──────────────────────────────────────
+[ ] 26. Generate a second time. Confirm "1 OF 3 LISTS" (still one, same-week replacement).
+[ ] 27. Manually create a second list (future test — requires planning a different week).
+        At 3 lists, generating again should remove the oldest automatically.
+
+─── DELETE LIST ─────────────────────────────────────────
+[ ] 28. Tap the trash icon next to the list date tab. Confirm:
+        - List is deleted
+        - If it was the active list, another list becomes active (or empty state shows)
+
+─── PANTRY SUBTRACTION ──────────────────────────────────
+[ ] 29. Add an ingredient to your Pantry (e.g. "soy sauce", quantity 10, unit "tbsp").
+[ ] 30. Regenerate the grocery list. Confirm the pantry item is subtracted:
+        - If pantry has enough, the item does NOT appear in the list
+        - If pantry has less than needed, the item appears with a REDUCED quantity
+
+─── EDGE CASES ─────────────────────────────────────────
+[ ] 31. Generate with NO meals planned. Confirm "Nothing to buy." message appears.
+[ ] 32. Disconnect network and tap Generate. Confirm error message:
+        "Failed to generate. Check your connection and try again."
+[ ] 33. Add an item with a non-numeric quantity (letters). Confirm it doesn't crash.
+[ ] 34. Close the "Add to pantry" sheet using the X button. Confirm item is NOT checked.
+        (Closing the sheet should not mark the item as bought.)

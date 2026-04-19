@@ -1,0 +1,75 @@
+FullPantry — Phase 7 (Polish & Deploy) Manual Test Checklist
+=============================================================
+Test BOTH on your phone AND on a desktop browser (Chrome/Safari).
+
+─── DESKTOP SIDEBAR ─────────────────────────────────────────
+[ ] 1. Open at 1024px+ width. Confirm left sidebar shows:
+        - "FullPantry" wordmark with terracotta icon
+        - Recipes, Planner, Pantry, Groceries links
+        - "Your Kitchen" label at bottom
+        - Bottom nav is HIDDEN on desktop
+[ ] 2. Click each sidebar link. Confirm active item highlights in terracotta
+        with orange dot indicator, and page loads.
+[ ] 3. Resize browser below 1024px. Confirm sidebar disappears and
+        bottom nav reappears.
+
+─── ANIMATIONS ──────────────────────────────────────────────
+[ ] 4. Navigate between tabs. Confirm each page fades up smoothly
+        (0.25s, subtle — not jarring).
+[ ] 5. Open Recipes tab with multiple recipes. Confirm cards stagger in
+        sequentially rather than all appearing at once.
+[ ] 6. Hover over a recipe card on desktop. Confirm it lifts 2px with shadow.
+[ ] 7. Open the grocery list. Tap the orange "+" FAB button. Confirm it
+        has a subtle breathing glow ring animation.
+[ ] 8. Tap the circle to check a grocery item. Confirm the AddToPantrySheet
+        slides up from the bottom (smooth, not instant snap).
+[ ] 9. Tap "+ Add item" on Planner. Confirm the picker slides in smoothly.
+
+─── MOBILE FAB POSITION ─────────────────────────────────────
+[ ] 10. On mobile, open Groceries with a list. Confirm the orange "+" FAB
+         sits ABOVE the bottom navigation bar (not overlapping it).
+
+─── ERROR PAGES ─────────────────────────────────────────────
+[ ] 11. Navigate to /anything-fake (e.g. /blah). Confirm a styled 404 page
+         appears with a "Go to Recipes" link (not a blank Next.js error).
+[ ] 12. The 404 page uses the app's design (cream background, terracotta,
+         serif heading).
+
+─── OFFLINE BANNER ──────────────────────────────────────────
+[ ] 13. In Chrome DevTools → Network tab → set "Offline". Confirm an amber
+         banner appears at the top: "You're offline — some features may be
+         unavailable".
+[ ] 14. On desktop, confirm the offline banner starts at the right edge of
+         the sidebar (doesn't overlap the sidebar text).
+[ ] 15. Set network back to Online. Confirm banner disappears immediately.
+
+─── PWA INSTALL ─────────────────────────────────────────────
+[ ] 16. In Chrome on desktop, confirm the address bar shows an install icon.
+         Click it and confirm the app installs with the correct icon and name.
+[ ] 17. On iPhone Safari: tap Share → Add to Home Screen. Confirm:
+         - App icon appears (your custom logo, NOT a screenshot)
+         - App name shows "FullPantry"
+         - Opening from home screen launches in standalone mode (no Safari UI)
+[ ] 18. On Android Chrome: confirm install banner or 3-dot → Install App works.
+
+─── PWA ICONS ───────────────────────────────────────────────
+[ ] 19. Confirm icon-192.png, icon-512.png, and apple-touch-icon.png all
+         exist in public/icons/ and display your logo correctly.
+[ ] 20. In Chrome DevTools → Application → Manifest: confirm all icons load
+         with no errors, shortcuts appear (Recipes, Planner, Groceries).
+
+─── PERFORMANCE ─────────────────────────────────────────────
+[ ] 21. Open Chrome DevTools → Lighthouse. Run a Mobile audit. Confirm:
+         - Performance ≥ 80
+         - Accessibility ≥ 90
+         - PWA criteria met (installable, service worker registered)
+[ ] 22. Recipe images load progressively (not all at once). Check Network tab
+         to confirm lazy loading is active on recipe cards below the fold.
+
+─── EDGE CASES ──────────────────────────────────────────────
+[ ] 23. Rapidly click between tabs 5 times fast. Confirm no broken layouts
+         or stuck loading states from the fade-in animation.
+[ ] 24. On mobile, go offline and navigate between tabs. Confirm the offline
+         banner persists across all pages.
+[ ] 25. Resize from mobile to desktop and back. Confirm sidebar/bottom-nav
+         swap correctly at the 1024px breakpoint.

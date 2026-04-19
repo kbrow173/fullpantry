@@ -1,0 +1,86 @@
+FullPantry — Phase 6 (AI Smart Features) Manual Test Checklist
+===============================================================
+Test on your phone or in a mobile-sized browser window.
+Prerequisites: At least 3–5 recipes in your collection. A few meals planned for the week.
+
+─── PLAN MY WEEK (AI MEAL SUGGESTIONS) ─────────────────────────
+[ ] 1. Navigate to Planner tab. Confirm you see the "✨ Suggest meals for empty slots" button
+        below the "Meal Planner" heading.
+
+[ ] 2. Tap the button. Confirm:
+        - A bottom sheet slides up labeled "Suggested Meals"
+        - Three skeleton rows pulse with "Asking AI for suggestions…" text underneath
+
+[ ] 3. After Gemini responds, confirm:
+        - Each suggestion row shows: day + date · Meal (e.g. "Mon 4/21 · Dinner") and recipe title
+        - All rows start checked (orange circle with checkmark)
+        - Button reads "Add N meals to planner" (N = total suggestions)
+
+[ ] 4. Tap a checked row to deselect it. Confirm:
+        - Row dims to 50% opacity
+        - Circle becomes empty
+        - Button count decreases by 1
+
+[ ] 5. Tap it again to re-select. Confirm it returns to orange + count increases.
+
+[ ] 6. Deselect all rows. Confirm "Add 0 meals to planner" button is disabled.
+
+[ ] 7. Re-select at least one. Tap "Add N meals to planner". Confirm:
+        - Sheet closes
+        - Selected meals appear in the week grid on correct days
+        - Planner re-renders with new meals visible
+
+[ ] 8. Tap "Suggest meals" again when week is fully planned. Confirm:
+        - Sheet shows "Your week is fully planned!" message
+        - No skeleton, no suggestions list
+
+[ ] 9. Tap the X button on the sheet. Confirm sheet closes without saving anything.
+
+─── WHAT CAN I MAKE ─────────────────────────────────────────────
+[ ] 10. Navigate to Recipes tab. Confirm you see a "✨ Can Make" pill before the "All" pill.
+
+[ ] 11. Tap "✨ Can Make". Confirm:
+        - Pill turns terracotta/orange (active state)
+        - Spinner shows briefly while fetching
+        - After load: "Showing recipes you can cook with your pantry" appears below pills
+        - Recipe grid filters to show only makeable/nearly-makeable recipes
+
+[ ] 12. Confirm recipe cards in the filtered view show status badges:
+        - "✓ Ready" badge (green) for recipes with 0 missing ingredients
+        - "Missing N" badge (amber) for recipes missing 1–2 ingredients
+        - Recipes missing 3+ ingredients do NOT appear
+
+[ ] 13. Tap "✨ Can Make" again. Confirm:
+        - Pill returns to unselected state
+        - All recipes show again (no badges)
+        - "Showing recipes…" subtitle disappears
+
+[ ] 14. With Can Make active, tap "Dinner" category pill. Confirm:
+        - Both filters apply simultaneously (dinner recipes you can make)
+
+[ ] 15. With Can Make active, type a search term. Confirm:
+        - Search narrows within the Can Make results
+
+─── SMART GROCERY CATEGORIZATION ───────────────────────────────
+[ ] 16. Generate a grocery list (Groceries → "Generate for next 7 days").
+[ ] 17. Check if any unusual/exotic ingredients appear in your planned recipes.
+        Confirm they land in a sensible section (not "Other").
+        (This is automatic — Gemini recategorizes any items the rule-based system misses.)
+
+─── EDGE CASES ──────────────────────────────────────────────────
+[ ] 18. Test Suggest with an empty recipe collection (0 recipes).
+        Confirm sheet shows no suggestions or a graceful empty state.
+
+[ ] 19. Disconnect network, tap "Suggest meals". Confirm:
+        - Error message: "Couldn't generate suggestions."
+        - "Try again" link appears and re-triggers the request on tap.
+
+[ ] 20. Test Can Make with empty pantry (no items). Confirm:
+        - No recipes show as "✓ Ready"
+        - Recipes missing ≤2 ingredients may show as "Missing N"
+
+[ ] 21. Suggestions should only fill EMPTY slots. If Monday dinner is already planned,
+        confirm the AI does not suggest a replacement for it.
+
+[ ] 22. Confirm no duplicate recipes across a single week's suggestions
+        (same recipe should not appear in multiple slots).

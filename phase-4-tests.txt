@@ -1,0 +1,80 @@
+FullPantry — Phase 4 (Meal Planner) Test Checklist
+====================================================
+Test on your actual phone after running the SQL migration (003_meal_planner.sql) in Supabase.
+
+SETUP
+-----
+[ ] Run supabase/migrations/003_meal_planner.sql in the Supabase SQL Editor
+[ ] Open the app on your phone at the /planner tab
+
+WEEK GRID
+---------
+[ ] Grid shows the current week (Sun–Sat)
+[ ] Today's date is highlighted in terracotta
+[ ] The currently selected day has full terracotta background
+[ ] Tapping a different day updates the day panel below immediately
+[ ] Tapping < arrow navigates to the prior week; the week label updates
+[ ] Tapping > arrow navigates to the next week; the week label updates
+[ ] Navigating to next week and back returns to the correct week
+
+DAY PANEL — EMPTY STATE
+-----------------------
+[ ] Four meal slots appear: Breakfast, Lunch, Dinner, Snack
+[ ] Each empty slot shows a dashed border and "+ Add meal" in terracotta
+[ ] Loading skeletons appear briefly while fetching, then slots render
+
+ADDING A RECIPE MEAL
+--------------------
+[ ] Tapping "+ Add meal" opens the full-screen recipe picker
+[ ] The search bar is auto-focused when the picker opens
+[ ] Typing in search filters recipes in real time
+[ ] Tapping a category pill (e.g., "Dinner") filters to that category
+[ ] Tapping "All" shows all recipes again
+[ ] Tapping a recipe card shows the confirmation bottom sheet
+[ ] The sheet shows the recipe title, slot, and date
+[ ] The servings stepper starts at the recipe's default servings
+[ ] Tapping − reduces servings (stops at 1)
+[ ] Tapping + increases servings
+[ ] Tapping "Add to plan" saves and closes — the slot now shows the recipe
+[ ] The week grid dot for that day lights up
+
+ADDING A CUSTOM MEAL
+---------------------
+[ ] Typing in the "custom meal" input at the bottom and pressing Enter saves it
+[ ] Tapping "Add" with text saves and closes — the slot shows the custom meal name
+[ ] Tapping "Add" with an empty field does nothing (button stays disabled)
+
+EDITING A MEAL
+--------------
+[ ] Tapping an existing filled slot reopens the picker
+[ ] If the slot had a recipe with e.g. 4 servings, tapping that recipe in the picker shows the stepper pre-set to 4 (not the recipe default)
+[ ] Saving a different recipe replaces the old one
+
+DELETING A MEAL
+---------------
+[ ] Hovering/long-pressing a filled slot reveals an X button
+[ ] Tapping X removes the meal immediately from the UI
+[ ] Refreshing the page — the meal is gone (confirmed deleted in DB)
+[ ] If network fails during delete, the meal reappears (optimistic rollback)
+
+WEEK PERSISTENCE
+----------------
+[ ] Add meals to a few different days
+[ ] Navigate to next week and back — the meals are still there
+[ ] Hard-refresh the page — all meals persist
+
+EDGE CASES
+----------
+[ ] Add a meal on Sunday of this week, navigate away and back — date is correct
+[ ] Open the planner after midnight — "today" highlight moves to the new day on next open
+[ ] With no recipes in your collection, the picker shows "No recipes found" and the custom meal input still works
+[ ] Search for a recipe that doesn't exist — shows "No recipes found" cleanly
+[ ] Tap backdrop (dark overlay) behind the confirm sheet — sheet closes without saving
+[ ] Back arrow (top-left) in picker — closes without saving
+
+VISUAL CHECK
+------------
+[ ] The planner tab is the active tab (filled icon) when on /planner
+[ ] No layout shifts or flicker when navigating between weeks
+[ ] Recipe images load in the picker grid
+[ ] Recipe cards without images show the category emoji placeholder

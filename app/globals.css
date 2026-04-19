@@ -1,0 +1,292 @@
+@import "tailwindcss";
+
+/* ─────────────────────────────────────────
+   FullPantry Design System
+   Aesthetic: NYT Cooking / Flipboard editorial
+   Palette:   Terracotta + Warm Cream + Charcoal
+───────────────────────────────────────── */
+
+:root {
+  /* Backgrounds */
+  --fp-bg: #FAF7F2;
+  --fp-surface: #FFFFFF;
+  --fp-surface-2: #F5F0E8;
+  --fp-surface-3: #EDE8DF;
+
+  /* Borders */
+  --fp-border: #E8E0D0;
+  --fp-border-strong: #D0C8B8;
+
+  /* Text */
+  --fp-text: #1C1A18;
+  --fp-text-secondary: #6B6456;
+  --fp-text-muted: #A89F91;
+  --fp-text-inverse: #FFFFFF;
+
+  /* Terracotta Accent */
+  --fp-accent: #C4622D;
+  --fp-accent-hover: #AE5426;
+  --fp-accent-active: #9A4920;
+  --fp-accent-light: #E8956A;
+  --fp-accent-bg: #FDF0E8;
+  --fp-accent-border: #F0CBA8;
+
+  /* Semantic Colors */
+  --fp-success: #4A7C59;
+  --fp-success-bg: #EDF5EF;
+  --fp-warning: #C4922D;
+  --fp-warning-bg: #FDF6E8;
+  --fp-error: #C44A2D;
+  --fp-error-bg: #FDF0ED;
+
+  /* Shadows */
+  --fp-shadow-sm: 0 1px 3px rgba(28, 26, 24, 0.06), 0 1px 2px rgba(28, 26, 24, 0.04);
+  --fp-shadow-md: 0 4px 12px rgba(28, 26, 24, 0.08), 0 2px 4px rgba(28, 26, 24, 0.04);
+  --fp-shadow-lg: 0 8px 24px rgba(28, 26, 24, 0.10), 0 4px 8px rgba(28, 26, 24, 0.06);
+
+  /* Typography */
+  --fp-font-serif: var(--font-playfair), 'Playfair Display', Georgia, serif;
+  --fp-font-sans: var(--font-inter), 'Inter', -apple-system, sans-serif;
+
+  /* Layout */
+  --fp-bottom-nav-height: 72px;
+  --fp-safe-bottom: env(safe-area-inset-bottom, 0px);
+
+  /* Radius */
+  --fp-radius-sm: 6px;
+  --fp-radius-md: 10px;
+  --fp-radius-lg: 16px;
+  --fp-radius-xl: 24px;
+  --fp-radius-pill: 9999px;
+}
+
+/* ─── Tailwind Theme Registration ─── */
+@theme inline {
+  /* Background colors */
+  --color-fp-bg: var(--fp-bg);
+  --color-fp-surface: var(--fp-surface);
+  --color-fp-surface-2: var(--fp-surface-2);
+  --color-fp-surface-3: var(--fp-surface-3);
+
+  /* Border colors */
+  --color-fp-border: var(--fp-border);
+  --color-fp-border-strong: var(--fp-border-strong);
+
+  /* Text colors */
+  --color-fp-text: var(--fp-text);
+  --color-fp-text-secondary: var(--fp-text-secondary);
+  --color-fp-text-muted: var(--fp-text-muted);
+  --color-fp-text-inverse: var(--fp-text-inverse);
+
+  /* Accent colors */
+  --color-fp-accent: var(--fp-accent);
+  --color-fp-accent-hover: var(--fp-accent-hover);
+  --color-fp-accent-active: var(--fp-accent-active);
+  --color-fp-accent-light: var(--fp-accent-light);
+  --color-fp-accent-bg: var(--fp-accent-bg);
+  --color-fp-accent-border: var(--fp-accent-border);
+
+  /* Semantic colors */
+  --color-fp-success: var(--fp-success);
+  --color-fp-success-bg: var(--fp-success-bg);
+  --color-fp-warning: var(--fp-warning);
+  --color-fp-warning-bg: var(--fp-warning-bg);
+  --color-fp-error: var(--fp-error);
+  --color-fp-error-bg: var(--fp-error-bg);
+
+  /* Fonts */
+  --font-serif: var(--fp-font-serif);
+  --font-sans: var(--fp-font-sans);
+}
+
+/* ─── Base Reset & Defaults ─── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  height: 100%;
+}
+
+body {
+  background-color: var(--fp-bg);
+  color: var(--fp-text);
+  font-family: var(--fp-font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100%;
+  /* Reserve space for the bottom nav on mobile only */
+  padding-bottom: calc(var(--fp-bottom-nav-height) + var(--fp-safe-bottom));
+}
+
+@media (min-width: 1024px) {
+  body {
+    padding-bottom: 0;
+  }
+}
+
+/* ─── Typography Utilities ─── */
+.font-display {
+  font-family: var(--fp-font-serif);
+}
+
+h1, h2, h3 {
+  font-family: var(--fp-font-serif);
+  font-weight: 700;
+  color: var(--fp-text);
+  line-height: 1.2;
+}
+
+h4, h5, h6 {
+  font-weight: 600;
+  color: var(--fp-text);
+  line-height: 1.3;
+}
+
+/* ─── Scrollbar Styling ─── */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--fp-border-strong);
+  border-radius: var(--fp-radius-pill);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--fp-text-muted);
+}
+
+/* ─── Focus Ring ─── */
+:focus-visible {
+  outline: 2px solid var(--fp-accent);
+  outline-offset: 2px;
+  border-radius: var(--fp-radius-sm);
+}
+
+/* ─── Image Defaults ─── */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ─── Smooth Transitions ─── */
+button, a, input, select, textarea {
+  transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, opacity 0.15s ease;
+}
+
+/* ─── Input Caret & Color Scheme ─── */
+/* Explicit caret-color prevents WebKit from losing the cursor on focus.
+   color-scheme: light tells Safari this is always a light input — no dark-mode override. */
+input, textarea, select {
+  caret-color: var(--fp-text);
+  color-scheme: light;
+}
+
+/* ─── Touch Tap Highlight ─── */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ─── Safe Area Insets ─── */
+.safe-bottom {
+  padding-bottom: var(--fp-safe-bottom);
+}
+
+/* ─── Loading Shimmer Animation ─── */
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--fp-surface-2) 25%,
+    var(--fp-surface-3) 50%,
+    var(--fp-surface-2) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+/* ─── Page Fade-In Animation ─── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.25s ease-out forwards;
+}
+
+/* ─── Stagger Animation ─── */
+.stagger > * {
+  animation: fadeInUp 0.25s ease-out forwards;
+  opacity: 0;
+}
+.stagger > *:nth-child(1)  { animation-delay: 0.04s; }
+.stagger > *:nth-child(2)  { animation-delay: 0.08s; }
+.stagger > *:nth-child(3)  { animation-delay: 0.12s; }
+.stagger > *:nth-child(4)  { animation-delay: 0.16s; }
+.stagger > *:nth-child(5)  { animation-delay: 0.20s; }
+.stagger > *:nth-child(6)  { animation-delay: 0.24s; }
+.stagger > *:nth-child(7)  { animation-delay: 0.28s; }
+.stagger > *:nth-child(8)  { animation-delay: 0.32s; }
+.stagger > *:nth-child(9)  { animation-delay: 0.36s; }
+.stagger > *:nth-child(10) { animation-delay: 0.38s; }
+.stagger > *:nth-child(n+11) { animation-delay: 0.40s; }
+
+/* ─── Scale Pop (check-off, button press) ─── */
+@keyframes scalePop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.18); }
+  70%  { transform: scale(0.94); }
+  100% { transform: scale(1); }
+}
+.animate-scale-pop {
+  animation: scalePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* ─── Slide Up (bottom sheets) ─── */
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0.6; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.animate-slide-up {
+  animation: slideUp 0.28s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+
+/* ─── Card hover lift ─── */
+.card-hover {
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--fp-shadow-md);
+}
+
+/* ─── FAB pulse ring ─── */
+@keyframes fabPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(196, 98, 45, 0.35); }
+  70%  { box-shadow: 0 0 0 10px rgba(196, 98, 45, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(196, 98, 45, 0); }
+}
+.fab-pulse {
+  animation: fabPulse 2.2s ease-out infinite;
+}

@@ -1,0 +1,127 @@
+FullPantry — Phase 1 Real-World Test Checklist
+================================================
+Test on your actual device (phone preferred). Mark each PASS / FAIL.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 1 — ADD RECIPE (Manual Entry)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1.1  Tap "+" / "Add Recipe" — new recipe form opens            [x ]
+1.2  Submit with blank title — red error appears, no save      [ x]
+1.3  Submit with 0 servings — red error appears, no save       [x ]
+1.4  Type -5 in Prep time, submit — red error appears          [x (my cursor disappears when I click or hover on any of these boxes (i think it's turning white). Fix.]
+1.5  Type -10 in Cook time, submit — red error appears         [x ]
+1.6  Add 3 ingredients, leave all names blank, submit —
+     "Add at least one ingredient" error appears               [ x]
+1.7  Enter "abc" in ingredient quantity field, submit —
+     "invalid quantity" error appears                          [ FAIL]
+1.8  Add ingredient — notes field is visible below EVERY
+     ingredient row (not just the first one)                   [ x]
+1.9  Add 3+ ingredients — up/down arrows appear in each row,
+     tapping reorders correctly                                [ x]
+1.10 Add a photo — preview shows, "Change" button works        [ x]
+1.11 Remove photo — placeholder area reappears                 [x ]
+1.12 Upload a non-image file (e.g. .txt) — rejected            [(impossible to test. Assume pass) ]
+1.13 Fill all fields correctly, submit — redirects to
+     recipe detail page, data is correct                       [ x]
+1.14 Add recipe with no photo — detail page shows no image,
+     no broken img tag                                         [ x]
+1.15 Add recipe with no prep/cook time — detail stats bar
+     shows only what was filled in, no "0 min" shown           [x ]
+1.16 Add recipe with tags "quick, weeknight" — tags appear
+     as pills on detail page                                   [ x]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 2 — RECIPE DETAIL VIEW
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+2.1  Category label shows correct name (e.g. "Side Dish"
+     not "side-dish")                                          [x ]
+2.2  Tap heart — turns filled/terracotta immediately           [ x]
+2.3  Heart state persists after page refresh                   [ x]
+2.4  Tap heart while offline — heart reverts to previous
+     state (test by disabling WiFi mid-tap if possible)        [x]
+2.5  Serving adjuster: tap + and - updates ingredient
+     quantities in real time                                   [x ]
+2.6  Serving adjuster: fractions display correctly
+     (e.g. 1½ cup, ¾ tsp, ⅓ cup)                             [x]
+2.7  Serving adjuster: discrete items (eggs, cloves) always
+     show whole numbers, round up on fractional result         [x.... yes but if it's metric (like grams, it should be a decimal)  ]
+2.8  Tap edit (pencil icon) — goes to edit form prefilled      [ x]
+2.9  Tap delete — confirm dialog appears                       [x ]
+2.10 Cancel delete — stays on recipe page                      [ x]
+2.11 Confirm delete — recipe deleted, redirected to /recipes   [ x]
+2.12 Source URL (if present) — "Original source" link appears
+     and opens in new tab                                      [x]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 3 — EDIT RECIPE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+3.1  Edit form opens with all existing data prefilled          [x ]
+3.2  Change title, save — detail page shows new title          [ x]
+3.3  Add an ingredient, save — new ingredient appears
+     on detail page                                            [x ]
+3.4  Remove an ingredient, save — ingredient gone from
+     detail page                                              [ x]
+3.5  Reorder ingredients via up/down arrows, save —
+     order preserved on detail page                            [ x]
+3.6  Reorder instructions, save — order preserved              [ x]
+3.7  Change photo, save — new photo appears                    [x ]
+3.8  Remove photo, save — photo gone from detail page          [ x]
+3.9  Change category to "Breakfast", save — category label
+     updates on detail page                                    [x ]
+3.10 Cancel edit — goes back without saving changes            [x ]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 4 — RECIPE GRID / SEARCH
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+4.1  Recipes page shows grid of added recipes                  [ x]
+4.2  Search by title — filters results in real time            [ x]
+4.3  Search by tag — recipes with matching tag appear          [x ]
+4.4  Search by description text — recipe appears              [ x]
+4.5  Search with no matches — "No recipes match" message +
+     "Clear filters" button shown                              [ x]
+4.6  "Clear filters" button resets search and category         [ x]
+4.7  Category filter pills — tap "Dinner" shows only
+     dinner recipes                                            [ x]
+4.8  Category + search combined — filters both at once         [x ]
+4.9  Heart on recipe card — toggles immediately,
+     persists after refresh                                    [ x]
+4.10 Tap recipe card — navigates to detail page                [x ]
+4.11 No recipes at all — "No recipes yet." message shown       [x ]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 5 — EDGE CASES & ROBUSTNESS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+5.1  Navigate to /recipes/nonexistent-id-123 — 404 or
+     "not found" shown, no crash                               [x ]
+5.2  Very long recipe title — wraps correctly, no overflow     [ x]
+5.3  Recipe with 20+ ingredients — all display, scroll works  [ x]
+5.4  Recipe with 15+ steps — all display, step numbers correct [ x]
+5.5  Add recipe with only required fields (title + 1 ingredient,
+     servings) — saves successfully, no errors                 [ x]
+5.6  Image file larger than 5MB — check: does it error
+     gracefully or does Supabase storage reject it?            [(untestable) ]
+5.7  Rotate device mid-form — layout holds, no lost data       [Passed, but only in Inspect Element envirnoment]
+5.8  Back button from recipe detail — returns to recipe list   [ There is no back button, All Recipes]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SECTION 6 — PWA & NAVIGATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+6.1  App installs to home screen (Add to Home Screen)          [untestable ]
+6.2  Launches in standalone mode (no browser chrome)           [ Not on vercel yet]
+6.3  Bottom nav: all 4 tabs tap correctly (Recipes, Planner,
+     Pantry, Groceries)                                        [x]
+6.4  Active tab is highlighted correctly                       [ x]
+6.5  Planner / Pantry / Groceries tabs show "Coming soon"
+     placeholder (not blank/error)                             [x ]
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SIGN-OFF
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+All PASS: Phase 1 is complete. Move to Phase 2 (Recipe URL Import).
+Any FAIL: Document what failed and share with Claude before Phase 2.

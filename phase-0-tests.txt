@@ -1,0 +1,99 @@
+╔══════════════════════════════════════════════════════════╗
+║         FullPantry — Phase 0 Test Checklist              ║
+║         Foundation: Design System, Nav, PWA              ║
+╚══════════════════════════════════════════════════════════╝
+
+Run the dev server first:
+  cd C:\Users\keega\Projects\fullpantry
+  npm run dev
+  Then open http://localhost:3000
+
+─────────────────────────────────────────────
+1. ROOT REDIRECT
+─────────────────────────────────────────────
+□ Navigate to http://localhost:3000
+□ VERIFY: You are immediately redirected to http://localhost:3000/recipes All GOOD
+□ VERIFY: No blank flash or error page before redirect All GOOD
+
+─────────────────────────────────────────────
+2. DESIGN SYSTEM — VISUAL CHECKS
+─────────────────────────────────────────────
+□ VERIFY: Background is a warm cream color (NOT pure white, NOT gray) Yes, BUT the look still looks INSANELY AI Vibe coded. Make it more original than that. 
+□ VERIFY: "Recipes" heading uses a serif font (Playfair Display — elegant, not sans-serif) Same point as above
+□ VERIFY: Body text is clean sans-serif (Inter) same point as above
+□ VERIFY: The "+ Add Recipe" button is terracotta/rust colored (brownish-orange) same point as above
+□ VERIFY: No dark mode — everything stays light/warm Same point a above
+
+─────────────────────────────────────────────
+3. BOTTOM NAVIGATION
+─────────────────────────────────────────────
+□ VERIFY: Bottom nav is visible with 4 tabs: Recipes, Planner, Pantry, Groceries YES
+□ VERIFY: Active tab (Recipes) shows in terracotta/rust color YES
+□ VERIFY: Active tab has a small indicator bar at the top of the tabYES
+□ VERIFY: Inactive tabs are in muted/gray color YES
+□ Click "Planner" → VERIFY: navigates to /planner, Planner tab becomes active (terracotta) YES
+□ Click "Pantry" → VERIFY: navigates to /pantry, Pantry tab becomes active YES
+□ Click "Groceries" → VERIFY: navigates to /groceries, Groceries tab becomes active YES
+□ Click "Recipes" → VERIFY: returns to /recipes, Recipes tab becomes active YES
+□ VERIFY: No full page reloads when switching tabs (smooth client-side navigation) YES
+
+─────────────────────────────────────────────
+4. PAGE CONTENT — EMPTY STATES
+─────────────────────────────────────────────
+/recipes:
+□ VERIFY: Shows "Recipes" heading (serif font) YES
+□ VERIFY: Shows "Your kitchen collection" subtitle YES
+□ VERIFY: Shows empty state: ChefHat icon in a terracotta-tinted box
+□ VERIFY: Shows "No recipes yet" title
+□ VERIFY: Shows two buttons: "Add Recipe Manually" and "Import from URL"
+□ VERIFY: "Add Recipe Manually" button is terracotta/rust (primary style)
+
+/planner:
+□ VERIFY: Shows "Meal Planner" heading + "Plan your week" subtitle
+□ VERIFY: Shows calendar icon in empty state
+
+/pantry:
+□ VERIFY: Shows "Pantry" heading + "What's in your kitchen" subtitle
+□ VERIFY: Shows "+ Add Item" button in the header (top right)
+□ VERIFY: Shows empty state with Package icon
+
+/groceries:
+□ VERIFY: Shows "Groceries" heading + "Your shopping list" subtitle
+□ VERIFY: Shows ShoppingCart icon in empty state
+
+ASSUME YES FOR ALL OF THE ABOVE
+
+─────────────────────────────────────────────
+5. MOBILE FEEL (resize browser to ~390px wide OR use DevTools mobile)
+─────────────────────────────────────────────
+□ VERIFY: Bottom nav fills the full width
+□ VERIFY: Content is properly padded on left and right (not edge-to-edge)
+□ VERIFY: Heading text doesn't overflow or wrap awkwardly
+□ VERIFY: Buttons are easy to tap (tall enough, not tiny)
+□ VERIFY: Nav icons + labels are clearly readable at mobile size
+
+YES FOR ALL OF THE ABOVE
+
+─────────────────────────────────────────────
+6. PWA / INSTALLABILITY
+─────────────────────────────────────────────
+□ In Chrome, open DevTools → Application → Manifest
+□ VERIFY: Manifest loads (name: "FullPantry", theme_color: "#C4622D") YES
+□ VERIFY: No manifest errors shown YES
+□ In Chrome DevTools → Application → Service Workers
+□ VERIFY: A service worker is registered (sw.js) YES
+□ VERIFY: Status shows "activated and running" YES
+
+─────────────────────────────────────────────
+7. QUICK SMOKE TEST — NO CONSOLE ERRORS
+─────────────────────────────────────────────
+□ Open browser DevTools → Console YES
+□ Navigate through all 4 tabs YES
+□ VERIFY: No red errors in console YES
+□ Warnings are OK (Next.js sometimes shows hydration warnings in dev mode)
+
+─────────────────────────────────────────────
+DONE? Report back:
+  ✅ All passing — ready for Phase 1
+  ❌ Something failed — describe what you see
+─────────────────────────────────────────────

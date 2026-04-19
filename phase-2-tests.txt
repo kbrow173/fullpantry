@@ -1,0 +1,226 @@
+FullPantry — Phase 2: Recipe Import
+Manual Test Checklist
+Run on your phone (or browser) with dev server running.
+=====================================================
+
+SETUP
+-----
+1. Start dev server: npm run dev
+2. Open http://localhost:3000 (or your port)
+3. Make sure GEMINI_API_KEY is set in .env.local
+
+═══════════════════════════════════════════════════
+SECTION 1 — IMPORT BUTTON VISIBILITY
+═══════════════════════════════════════════════════
+
+[x ] 1a. Go to /recipes.
+        If you have recipes: confirm "Import URL" button appears in the
+        page header, to the LEFT of "Add Recipe".
+        It should be an outlined button with an import icon.
+
+[ x] 1b. If your recipe collection is EMPTY:
+        Confirm the empty state shows "import from a URL" as a text link
+        next to the "Add Recipe" button.
+
+═══════════════════════════════════════════════════
+SECTION 2 — MODAL: OPEN & CLOSE
+═══════════════════════════════════════════════════
+
+[ x] 2a. Click "Import URL" (or "import from a URL").
+        Confirm the ImportModal opens with a backdrop blur behind it.
+
+[ x] 2b. Confirm the modal has:
+        - Title: "Import a recipe"
+        - Subtitle: "Paste a URL from any recipe site"
+        - A URL input field with a link icon on the left
+        - An "Import recipe" button (initially GREYED OUT)
+        - An "or add manually" text link
+
+[x] 2c. Confirm the URL input has keyboard focus immediately when the
+        modal opens (cursor blinking in the field without tapping).
+
+[x ] 2d. Click the backdrop (dark area outside the modal).
+        Confirm the modal closes.
+
+[x ] 2e. Reopen modal. Press the Escape key.
+        Confirm the modal closes.
+
+[ x] 2f. Reopen modal. Click the X button in the top-right corner.
+        Confirm the modal closes.
+
+═══════════════════════════════════════════════════
+SECTION 3 — HAPPY PATH: SUCCESSFUL IMPORT
+═══════════════════════════════════════════════════
+
+[ Shows: "That doesn't look like a valid URL"] 3a. Open the modal. Type a partial URL (e.g. "allrecipes.com/recipe")
+        without a scheme. Confirm "Import recipe" button is still enabled
+        (the URL validates on the server, not client).
+
+[ x] 3b. Clear the input. Confirm button is greyed out again.
+
+[They all get blocked: 
+This site blocks automated access. Try copying the recipe manually" America's Test kitchen does work: "https://www.americastestkitchen.com/recipes/17079-spicy-peanut-noodles-with-shrimp-and-snow-peas"] 3c. Paste a URL from a major recipe site. Recommended test URLs
+        (use any one — they all have JSON-LD):
+
+        AllRecipes:
+        https://www.allrecipes.com/recipe/20762/california-roll/
+
+        Simply Recipes:
+        https://www.simplyrecipes.com/recipes/pasta_carbonara/
+
+        Serious Eats:
+        https://www.seriouseats.com/classic-beef-tacos
+
+        Click "Import recipe".
+
+[ x] 3d. Confirm loading state appears:
+        - Chef hat icon with spinning loader
+        - Text "Extracting recipe…"
+        - "Reading the page and pulling out the good stuff."
+        (This may take 5–15 seconds for AI fallback.)
+
+[ x] 3e. After loading, confirm PREVIEW state appears:
+        - Modal title changes to "Recipe found"
+        - Subtitle: "Review before adding to your collection"
+        - Recipe title (large serif, may be truncated if very long)
+        - Category badge in terracotta (e.g. "Dinner", "Lunch")
+        - Stats row showing: time, ingredient count, step count, servings
+        - Source domain (e.g. "allrecipes.com")
+        - "Edit & Save" primary button
+        - "← Try another URL" link
+
+[x] 3f. Click "Edit & Save".
+        Confirm the modal closes and you are navigated to /recipes/new
+        with the form PRE-POPULATED:
+        - Title field has the recipe name
+        - Category dropdown matches what was shown in the preview
+        - Prep time / Cook time filled in (if the site had them)
+        - Ingredients list populated (may be full strings like "2 cups flour")
+        - Instructions list populated with the steps
+        - Source URL field has the original URL
+
+[ x] 3g. Confirm page title shows "Review & Save" (not "Add Recipe").
+
+[x... is there anyway to still autopopulate the Qty and unit? ] 3h. Verify ingredient rows — each should have a name. Qty and unit
+        may be blank if the site stored them as full strings (e.g.
+        "2 cups flour" in the name field). This is expected.
+
+[x ] 3i. Click "Add to collection" without changing anything.
+        Confirm the recipe saves and you are taken to the recipe detail page.
+
+[x ] 3j. Verify the saved recipe shows:
+        - Correct title, category, description (if present)
+        - Ingredients and instructions from the imported page
+        - Source URL link at the bottom
+
+═══════════════════════════════════════════════════
+SECTION 4 — LOADING STATE CANCEL
+═══════════════════════════════════════════════════
+
+[x ] 4a. Paste a valid URL and click "Import recipe".
+        While loading is in progress (spinner visible), press Escape.
+        Confirm modal closes immediately without an error appearing.
+
+[x ] 4b. Reopen modal. Paste the same URL, click "Import recipe".
+        While loading, click the X button.
+        Confirm modal closes cleanly.
+
+[ x] 4c. Reopen modal again (fresh state — no leftover error).
+        Import the same URL successfully.
+        (This confirms the AbortController cleaned up properly.)
+
+═══════════════════════════════════════════════════
+SECTION 5 — ERROR STATES
+═══════════════════════════════════════════════════
+
+[ x] 5a. Open modal. Paste a URL that doesn't exist or is not a recipe:
+        https://www.google.com/
+        Click "Import recipe". Wait for response.
+        Confirm ERROR state appears:
+        - Red error box with a message (not a crash)
+        - "Try another URL" button
+        - "Add manually instead" text link
+
+[ x] 5b. In the error state, click "Try another URL".
+        Confirm modal resets to IDLE state with the URL input focused.
+
+[ x] 5c. In the error state, click "Add manually instead".
+        Confirm modal closes and you are taken to /recipes/new
+        with a BLANK form (no pre-population).
+
+[ x] 5d. Try an invalid URL: type "not a url at all" in the field.
+        Click "Import recipe". Confirm an error message appears
+        (not a browser crash or silent failure).
+
+[ x] 5e. Try a localhost URL: http://localhost:3000
+        Confirm the API returns an error and the modal shows
+        "That URL is not allowed." (SSRF protection).
+
+═══════════════════════════════════════════════════
+SECTION 6 — IMPORT FROM EMPTY STATE LINK
+═══════════════════════════════════════════════════
+
+[ x] 6a. If you have recipes, temporarily verify by checking the
+        empty state still works: go to /recipes and if there are
+        recipes, confirm the empty state "import from a URL" link
+        is NOT visible (it's only shown when collection is empty).
+
+[ x] 6b. (If collection is empty) Click "import from a URL" text link.
+        Confirm same ImportModal opens correctly.
+
+═══════════════════════════════════════════════════
+SECTION 7 — DIRECT /recipes/new NAVIGATION
+═══════════════════════════════════════════════════
+
+[x ] 7a. Navigate directly to /recipes/new (no ?from=import).
+        Confirm page title is "Add Recipe" (not "Review & Save").
+        Confirm form is BLANK (not pre-populated with stale import data).
+
+[ x] 7b. Navigate to /recipes/new?from=import (without having imported).
+        Confirm page title is "Add Recipe" and form is blank
+        (graceful handling of missing sessionStorage).
+
+═══════════════════════════════════════════════════
+SECTION 8 — SECOND IMPORT (no stale state)
+═══════════════════════════════════════════════════
+
+[x ] 8a. Open the ImportModal. Successfully import a recipe.
+        Click "Try another URL" in the preview to reset.
+        Confirm you are back to IDLE state with empty URL input.
+
+[ x] 8b. Import a DIFFERENT recipe URL. Confirm the new recipe
+        is shown in the preview (not the old one).
+
+═══════════════════════════════════════════════════
+SECTION 9 — MOBILE-SPECIFIC
+═══════════════════════════════════════════════════
+
+[x ] 9a. Open modal on mobile. Confirm modal is positioned correctly
+        (near top of screen, not clipped). Verify it's scrollable
+        if content is tall.
+
+[x ] 9b. Long-press to paste a URL from clipboard on mobile.
+        Confirm paste works and "Import recipe" button enables.
+
+[ x] 9c. After successful import, confirm "Edit & Save" navigates
+        correctly and the pre-populated form is fully visible
+        (no hidden fields below the fold).
+
+═══════════════════════════════════════════════════
+SECTION 10 — GEMINI FALLBACK (optional, advanced)
+═══════════════════════════════════════════════════
+
+[no, it is just saying recipe not found: https://www.chicagotribune.com/2026/03/08/buffalo-cauliflower-bites/] 10a. Try a URL from a smaller recipe site that may not have
+         JSON-LD structured data. The Gemini fallback should still
+         extract the recipe (may take 10–20 seconds).
+         Example: a personal food blog or local newspaper recipe page.
+
+[ (untestable)] 10b. Confirm the extracted data is reasonable — title correct,
+         ingredients populated, instructions present.
+         Category may default to "dinner" if Gemini can't determine it.
+
+=====================================================
+DONE? Mark all boxes and confirm with the dev.
+Phase 2 is complete when all SECTION 1–9 boxes pass.
+Section 10 is a bonus / informational.
+=====================================================

@@ -1,0 +1,130 @@
+FullPantry — Phase 3 (Pantry) Test Checklist
+=============================================
+Before testing: Run 002_pantry.sql in Supabase Dashboard → SQL Editor
+
+─── SETUP ────────────────────────────────────────────────
+[ ] Run the SQL migration in Supabase SQL Editor:
+    - Open Supabase Dashboard → SQL Editor → New Query
+    - Paste contents of supabase/migrations/002_pantry.sql
+    - Click Run — should create pantry_items table with no errors
+
+─── 1. EMPTY STATE ───────────────────────────────────────
+[ ] Navigate to /pantry
+[ ] Empty state shows: "Your pantry is bare." with description text
+[ ] "Add your first item" button is visible
+[ ] No search bar visible (only shown when items exist)
+
+─── 2. ADD FIRST ITEM ────────────────────────────────────
+[ ] Click "Add your first item" — bottom sheet slides up
+[ ] Sheet title says "Add to pantry"
+[ ] Item name field is auto-focused
+[ ] Type a name (e.g. "Chicken breast")
+[ ] Verify unit suggestion chips appear below the unit input (lb, oz, g)
+[ ] Click a chip (e.g. "lb") — chip highlights in accent color, unit field fills
+[ ] Change quantity to 2
+[ ] Select a category (e.g. Meat & Seafood) — button highlights
+[ ] Purchased date defaults to today
+[ ] Leave expiry date empty
+[ ] Click "Add to pantry"
+[ ] Sheet closes, item appears in list under correct category
+[ ] Item row shows: name, quantity (2 lb)
+[ ] Header subtitle updates to "1 item"
+[ ] Floating + button appears at bottom right
+
+─── 3. ADD MORE ITEMS ────────────────────────────────────
+[ ] Click the floating + button to add another item
+[ ] Add "Milk" → quantity 1, unit "cups", category Dairy & Eggs
+[ ] Add "Garlic" → quantity 3, unit "cloves", category Produce
+[ ] Verify each item appears in correct category group
+[ ] Verify category header shows icon + label + item count
+[ ] Header subtitle shows "3 items"
+
+─── 4. FRESHNESS INDICATORS ──────────────────────────────
+[ ] Add an item with purchased_date = today: no colored dot (transparent)
+[ ] In DB (Supabase Table Editor), manually edit purchased_date to 10 days ago
+    → Refresh page → amber dot + "Use soon" label appears on that item
+[ ] Edit purchased_date to 20 days ago
+    → Refresh page → red dot + "Check this" label appears
+[ ] Header shows "X items · Y need attention" (Y = items 7+ days old)
+
+─── 5. SEARCH ────────────────────────────────────────────
+[ ] Search bar visible when items exist
+[ ] Type "chick" → only Chicken breast shows (other items hidden)
+[ ] Clear button (X) appears in search bar
+[ ] Click X → search clears, all items show
+[ ] Type a non-existent item: "xyz123" → "No items matching 'xyz123'" message
+[ ] Clear search
+
+─── 6. EDIT ITEM ─────────────────────────────────────────
+[ ] Tap/click on an item name → edit sheet opens
+[ ] Sheet title says "Edit item"
+[ ] All fields pre-filled with current values
+[ ] Change the quantity → click "Save changes" → list updates immediately
+[ ] Click pencil icon (far right of row) → also opens edit sheet
+[ ] Make another change → save → list updates correctly
+
+─── 7. DELETE FROM EDIT SHEET ────────────────────────────
+[ ] Open edit sheet for an item
+[ ] "Delete" button (trash icon) appears in bottom-right of actions row
+[ ] Click Delete → sheet closes, item removed from list
+[ ] Refresh page → item does NOT come back (confirmed deleted from DB)
+
+─── 8. "USED IT" QUICK ACTION ────────────────────────────
+[ ] Each item row has a "Used it" button (checkmark icon) on the right
+[ ] Click "Used it" on an item → item disappears immediately (no confirmation)
+[ ] Refresh page → item does NOT come back (confirmed deleted from DB)
+
+─── 9. VALIDATION ────────────────────────────────────────
+[ ] Open add sheet, click "Add to pantry" with empty name
+    → Error: "Item name is required."
+[ ] Type a name, clear quantity, click save
+    → Error: "Quantity must be a positive number."
+[ ] Enter quantity = -1 → same error
+[ ] Fix both, save → works
+
+─── 10. KEYBOARD & ACCESSIBILITY ─────────────────────────
+[ ] Open add sheet, press Escape → sheet closes
+[ ] Click backdrop (dark overlay behind sheet) → sheet closes
+[ ] Tab through sheet fields in logical order
+
+─── 11. PERSISTENCE ──────────────────────────────────────
+[ ] Add 3 items with different categories
+[ ] Reload the page → all items still present
+[ ] Navigate to another tab (Recipes) and back → items still there
+
+─── 12. CATEGORIES ───────────────────────────────────────
+[ ] Add items in multiple categories
+[ ] Verify category order on pantry page matches:
+    Produce → Dairy & Eggs → Meat & Seafood → Grains & Pasta →
+    Canned & Jarred → Spices & Condiments → Frozen → Beverages →
+    Bakery → Snacks → Other
+[ ] Verify category icons display correctly (emojis)
+
+─── 13. UNIT SUGGESTIONS ─────────────────────────────────
+[ ] Type "garlic" → chips show: cloves, tsp, tbsp
+[ ] Type "butter" → chips show: tbsp, cups, oz, stick
+[ ] Type "eggs" → no chips (eggs are counted, no unit needed)
+[ ] Type "gibberish123" → default chips show: oz, lb, cups, g
+[ ] Type "" (empty) → no chips
+
+─── 14. NOTES FIELD ──────────────────────────────────────
+[ ] Add item with notes "opened, store-brand"
+[ ] Save → confirm saved (notes not displayed in row, but visible on edit)
+[ ] Edit the item → notes field pre-filled correctly
+
+─── 15. EXPIRY DATE ──────────────────────────────────────
+[ ] Add item with an expiry date set
+[ ] Save and reopen → expiry date preserved in edit sheet
+[ ] Clear expiry date, save → edit sheet shows empty expiry date
+
+─── 16. MOBILE UX ────────────────────────────────────────
+[ ] Test on mobile viewport (or DevTools 390×844)
+[ ] Bottom sheet does not cover entire screen (maxHeight: 92dvh)
+[ ] Sheet is scrollable when content is long
+[ ] Floating + button visible above bottom nav bar
+[ ] Last pantry item scrollable above the floating + button
+[ ] "Used it" button shows checkmark icon on mobile (no text label on small screens)
+[ ] Search bar full-width, placeholder readable
+
+─── DONE ─────────────────────────────────────────────────
+Report any failures. If all pass, Phase 3 is complete!

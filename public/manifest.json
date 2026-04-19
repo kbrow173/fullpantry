@@ -1,0 +1,50 @@
+{
+  "name": "FullPantry",
+  "short_name": "FullPantry",
+  "description": "Your kitchen companion — recipes, meal planner, pantry tracker, and smart grocery lists.",
+  "start_url": "/recipes",
+  "display": "standalone",
+  "background_color": "#FAF7F2",
+  "theme_color": "#C4622D",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-US",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": ["food", "lifestyle", "utilities"],
+  "shortcuts": [
+    {
+      "name": "Recipes",
+      "url": "/recipes",
+      "description": "Browse your recipe collection"
+    },
+    {
+      "name": "Meal Planner",
+      "url": "/planner",
+      "description": "Plan your weekly meals"
+    },
+    {
+      "name": "Groceries",
+      "url": "/groceries",
+      "description": "View your grocery list"
+    }
+  ]
+}
