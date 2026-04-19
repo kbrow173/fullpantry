@@ -178,6 +178,46 @@ const filtered = prev.filter((l) => l.id !== newList.id && l.week_start_date !==
 
 ---
 
+## Lesson 16: BottomNav safe-area paddingBottom must go on the background div, not the nav element (Phase 7 deploy)
+**Date**: 2026-04-18
+**What broke**: `paddingBottom: env(safe-area-inset-bottom)` was placed on the outer `<nav>` element (which is `fixed bottom-0`). This made the nav element taller, but the frosted-glass background div was only as tall as its content (68px). The result: the visible bar floated above the screen bottom with a transparent gap underneath — the nav appeared "too high up" on iPhone.
+
+**Fix**: Moved `paddingBottom: env(safe-area-inset-bottom, 0px)` into the inner `bg-fp-surface/90` div. Now the background colour extends all the way to the screen edge (covering the home indicator zone), and the 68px icon row sits above it.
+
+**Remember**: Safe-area padding must live on the **visible background element**, not an outer fixed container. If padding is on a transparent wrapper, the content floats above the inset and leaves a gap.
+
+---
+
+## Lesson 17: Next.js server component data goes stale after client-side delete without revalidatePath (Phase 7 deploy)
+**Date**: 2026-04-18
+**What broke**: After deleting a recipe, `router.push('/recipes')` navigated back to the list — but Next.js served a cached version of the server component. The deleted recipe still appeared. Clicking it returned a 404 because it was gone from the DB.
+
+**Fix**: Added `revalidatePath('/recipes')` in the `DELETE /api/recipes/[id]` route handler. Also added `export const dynamic = 'force-dynamic'` to `app/recipes/page.tsx` so the page is never statically cached.
+
+**Remember**: Any server component that displays data that can be mutated by a client action needs either `dynamic = 'force-dynamic'` OR `revalidatePath()` called in the mutating API route. `router.refresh()` alone is unreliable when combined with `router.push()` — the push races with the refresh. Use server-side revalidation instead.
+
+---
+
+## Lesson 18: App horizontal overflow on mobile requires overflow-x hidden on html, not just body (Phase 7 deploy)
+**Date**: 2026-04-18
+**What broke**: On narrow phones (375px and below), certain layouts caused horizontal overflow and the whole app could be swiped left/right. Adding `overflow-x: hidden` to `body` alone doesn't prevent this — the html element also needs it.
+
+**Fix**: Added `overflow-x: hidden` to the `html` selector in globals.css.
+
+**Remember**: Always put `overflow-x: hidden` on `html` (not just `body`) to prevent full-page horizontal scroll from any element that exceeds the viewport width.
+
+---
+
+## Lesson 19: iOS Safari needs apple-touch-icon.png at the root path, not just in metadata (Phase 7 deploy)
+**Date**: 2026-04-18
+**What broke**: The PWA icon didn't appear when adding to iPhone home screen. The icon was referenced in Next.js metadata and manifest.json at `/icons/apple-touch-icon.png`, but iOS Safari also looks for it at the root path `/apple-touch-icon.png` without any link hint.
+
+**Fix**: Copied `apple-touch-icon.png` to `public/apple-touch-icon.png` (root), in addition to keeping the `/icons/` copy. Also removed non-existent startup/splash screen image references from layout.tsx metadata — those caused 404s that interfered with PWA processing.
+
+**Remember**: Always place `apple-touch-icon.png` in the root of `public/` for iOS. Don't reference startup images in metadata unless the files actually exist — 404 splash image requests can prevent Safari from recognising the app as a PWA.
+
+---
+
 ## Lesson 8: Optimistic-delete quick actions must call the API, not just update local state (Phase 3)
 **Date**: 2026-04-17
 **What broke**: The "Used it" quick-delete button in `PantryItem` called `onDelete(item.id)` which mapped to `handleDelete` in the page — which only filtered local state. Item disappeared from the UI but came back on page reload because no DELETE API call was made.

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 type Params = Promise<{ id: string }>;
@@ -139,5 +140,6 @@ export async function DELETE(_req: Request, { params }: { params: Params }) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
+  revalidatePath("/recipes");
   return NextResponse.json({ success: true });
 }

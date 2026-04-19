@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+
+export const dynamic = "force-dynamic";
 import { Plus, ChefHat } from "lucide-react";
 import { PageShell } from "@/components/layout/PageShell";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -36,7 +38,7 @@ export default async function RecipesPage() {
               <Link href="/recipes/new">
                 <Button size="sm" variant="primary">
                   <Plus size={15} />
-                  Add Recipe
+                  <span className="hidden sm:inline">Add Recipe</span>
                 </Button>
               </Link>
             </div>

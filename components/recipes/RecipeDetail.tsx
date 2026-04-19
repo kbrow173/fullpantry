@@ -64,7 +64,6 @@ export function RecipeDetail({
         method: "DELETE",
       });
       if (res.ok) {
-        router.refresh();
         router.push("/recipes");
       } else {
         const data = await res.json().catch(() => ({}));

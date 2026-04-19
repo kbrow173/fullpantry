@@ -22,7 +22,7 @@ export function ImportButton({ variant = "button" }: ImportButtonProps) {
           onClick={() => setOpen(true)}
         >
           <Import size={15} />
-          Import URL
+          <span className="hidden sm:inline">Import URL</span>
         </Button>
       ) : (
         <button

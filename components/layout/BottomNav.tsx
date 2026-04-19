@@ -39,14 +39,15 @@ export function BottomNav() {
     <nav
       aria-label="Main navigation"
       className="fixed bottom-0 left-0 right-0 z-50 lg:hidden"
-      style={{
-        paddingBottom: "env(safe-area-inset-bottom, 0px)",
-      }}
     >
-      {/* Frosted glass bar */}
+      {/* Frosted glass bar — paddingBottom extends bg into safe area so nav doesn't float */}
       <div
         className="bg-fp-surface/90 border-t border-fp-border"
-        style={{ backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)" }}
+        style={{
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          paddingBottom: "env(safe-area-inset-bottom, 0px)",
+        }}
       >
         <div className="flex items-stretch h-[68px] max-w-2xl mx-auto">
           {NAV_ITEMS.map(({ href, label, icon: Icon, match }) => {

@@ -15,11 +15,11 @@ interface PageHeaderProps {
 export function PageHeader({ title, subtitle, action, className }: PageHeaderProps) {
   return (
     <header className={cn("mb-8", className)}>
-      <div className="flex items-start justify-between gap-4 mb-1">
+      <div className="flex items-start justify-between gap-3 mb-1 min-w-0">
         {/* Left accent + title block */}
-        <div className="flex items-start gap-3">
+        <div className="flex items-start gap-3 min-w-0">
           <div className="w-1 self-stretch rounded-full bg-fp-accent mt-1 flex-shrink-0" />
-          <h1 className="text-4xl font-bold text-fp-text font-display leading-none tracking-tight">
+          <h1 className="text-3xl sm:text-4xl font-bold text-fp-text font-display leading-none tracking-tight truncate">
             {title}
           </h1>
         </div>
