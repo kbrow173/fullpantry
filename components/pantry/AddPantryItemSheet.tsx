@@ -63,9 +63,9 @@ export function AddPantryItemSheet({
 
   const unitSuggestions = suggestUnits(name);
 
-  // Focus name input on open
+  // preventScroll stops browsers from scrolling the sheet to the input on focus
   useEffect(() => {
-    const t = setTimeout(() => nameRef.current?.focus(), 120);
+    const t = setTimeout(() => nameRef.current?.focus({ preventScroll: true }), 150);
     return () => clearTimeout(t);
   }, []);
 
