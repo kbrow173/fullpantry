@@ -122,6 +122,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100%;
+  overflow-x: hidden;
   /* Reserve space for the bottom nav on mobile only */
   padding-bottom: calc(var(--fp-bottom-nav-height) + var(--fp-safe-bottom));
 }

@@ -10,6 +10,9 @@ import path from "path";
  */
 
 const nextConfig: NextConfig = {
+  experimental: {
+    staleTimes: { dynamic: 0 },
+  },
   turbopack: {
     // Explicit root prevents false workspace detection from multiple lockfiles
     root: path.resolve(__dirname),

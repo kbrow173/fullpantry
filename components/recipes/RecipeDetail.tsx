@@ -65,6 +65,7 @@ export function RecipeDetail({
       });
       if (res.ok) {
         router.push("/recipes");
+        router.refresh();
       } else {
         const data = await res.json().catch(() => ({}));
         setDeleteError((data as { error?: string }).error ?? "Failed to delete recipe.");
