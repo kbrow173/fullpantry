@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useLayoutEffect, useRef } from "react";
 import { X, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { PANTRY_CATEGORIES, type PantryCategory, type PantryItem } from "@/lib/types";
@@ -48,6 +48,7 @@ export function AddPantryItemSheet({
 }: AddPantryItemSheetProps) {
   const isEditing = !!editItem;
   const nameRef = useRef<HTMLInputElement>(null);
+  const sheetRef = useRef<HTMLDivElement>(null);
 
   const [name, setName] = useState(editItem?.name ?? "");
   const [quantity, setQuantity] = useState(editItem?.quantity?.toString() ?? "1");
@@ -63,7 +64,12 @@ export function AddPantryItemSheet({
 
   const unitSuggestions = suggestUnits(name);
 
-  // preventScroll stops browsers from scrolling the sheet to the input on focus
+  // Force scroll to top before first paint — Chrome scroll anchoring pins bottom-anchored
+  // scrollable containers to the end of their content without this.
+  useLayoutEffect(() => {
+    if (sheetRef.current) sheetRef.current.scrollTop = 0;
+  }, []);
+
   useEffect(() => {
     const t = setTimeout(() => nameRef.current?.focus({ preventScroll: true }), 150);
     return () => clearTimeout(t);
@@ -157,11 +163,12 @@ export function AddPantryItemSheet({
 
       {/* Sheet */}
       <div
+        ref={sheetRef}
         role="dialog"
         aria-modal="true"
         aria-label={isEditing ? "Edit pantry item" : "Add pantry item"}
         className="fixed inset-x-0 bottom-0 z-50 rounded-t-3xl bg-fp-surface shadow-2xl ring-1 ring-fp-border"
-        style={{ maxHeight: "92dvh", overflowY: "scroll", WebkitOverflowScrolling: "touch" } as React.CSSProperties}
+        style={{ maxHeight: "92dvh", overflowY: "auto", overflowAnchor: "none", WebkitOverflowScrolling: "touch" } as React.CSSProperties}
       >
         {/* Drag handle */}
         <div className="flex justify-center pt-3 pb-1">
