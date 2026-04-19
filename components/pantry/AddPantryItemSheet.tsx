@@ -161,7 +161,7 @@ export function AddPantryItemSheet({
         aria-modal="true"
         aria-label={isEditing ? "Edit pantry item" : "Add pantry item"}
         className="fixed inset-x-0 bottom-0 z-50 rounded-t-3xl bg-fp-surface shadow-2xl ring-1 ring-fp-border"
-        style={{ maxHeight: "92dvh", overflowY: "auto" }}
+        style={{ maxHeight: "92dvh", overflowY: "scroll", WebkitOverflowScrolling: "touch" } as React.CSSProperties}
       >
         {/* Drag handle */}
         <div className="flex justify-center pt-3 pb-1">
@@ -286,7 +286,7 @@ export function AddPantryItemSheet({
           </div>
 
           {/* Dates */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-fp-text-secondary mb-1.5">
                 Purchased
