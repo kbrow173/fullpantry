@@ -82,17 +82,27 @@ export default function RootLayout({
           {children}
         </main>
         <BottomNav />
-        {/* PWA Service Worker Registration */}
+        {/* Kill any stale service worker from a previous deploy. The app currently
+            has no SW file (sw.js 404s), but older visitors may still have one active
+            and serving cached HTML/CSS. Unregister it and purge every cache. */}
         <Script
-          id="sw-register"
+          id="sw-unregister"
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{
             __html: `
               if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js').catch(function(err) {
-                    console.log('SW registration failed:', err);
-                  });
+                navigator.serviceWorker.getRegistrations().then(function(regs) {
+                  var hadAny = regs.length > 0;
+                  regs.forEach(function(r) { r.unregister(); });
+                  if (window.caches) {
+                    caches.keys().then(function(keys) {
+                      return Promise.all(keys.map(function(k) { return caches.delete(k); }));
+                    }).then(function() {
+                      if (hadAny) window.location.reload();
+                    });
+                  } else if (hadAny) {
+                    window.location.reload();
+                  }
                 });
               }
             `,
