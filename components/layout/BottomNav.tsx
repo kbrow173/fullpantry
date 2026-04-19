@@ -38,17 +38,15 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Main navigation"
-      className="fixed bottom-0 left-0 right-0 z-50 lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-50 lg:hidden bg-fp-surface/90 border-t border-fp-border"
+      style={{
+        backdropFilter: "blur(12px)",
+        WebkitBackdropFilter: "blur(12px)",
+        // Extend the bar itself into the safe area so the bg reaches the physical screen edge.
+        paddingBottom: "env(safe-area-inset-bottom, 0px)",
+      }}
     >
-      {/* Frosted glass bar — paddingBottom extends bg into safe area so nav doesn't float */}
-      <div
-        className="bg-fp-surface/90 border-t border-fp-border"
-        style={{
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
-          paddingBottom: "env(safe-area-inset-bottom, 0px)",
-        }}
-      >
+      <div>
         <div className="flex items-stretch h-[68px] max-w-2xl mx-auto">
           {NAV_ITEMS.map(({ href, label, icon: Icon, match }) => {
             const isActive = match(pathname);

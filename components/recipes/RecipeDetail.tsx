@@ -64,8 +64,10 @@ export function RecipeDetail({
         method: "DELETE",
       });
       if (res.ok) {
-        router.push("/recipes");
-        router.refresh();
+        // Hard navigation bypasses Next.js router cache AND any service worker
+        // holding a stale /recipes HTML page.
+        window.location.assign("/recipes");
+        return;
       } else {
         const data = await res.json().catch(() => ({}));
         setDeleteError((data as { error?: string }).error ?? "Failed to delete recipe.");

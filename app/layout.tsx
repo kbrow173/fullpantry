@@ -64,6 +64,14 @@ export default function RootLayout({
       lang="en"
       className={`${inter.variable} ${playfair.variable} h-full`}
     >
+      <head>
+        {/* Explicit viewport meta to guarantee viewport-fit=cover on iOS PWA (Next 16
+            Viewport export has been inconsistent about emitting this). */}
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, viewport-fit=cover"
+        />
+      </head>
       <body className="min-h-full antialiased">
         <OfflineBanner />
         <SideNav />
