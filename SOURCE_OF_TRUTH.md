@@ -144,7 +144,7 @@
 |------|---------|---------|-------|--------|
 | `components/pantry/PantryGroup.tsx` | Category section header (icon + label + count) with list of PantryItem rows | app/pantry/page.tsx | 3 | ✅ |
 | `components/pantry/PantryItem.tsx` | Single pantry item row — freshness dot (green/amber/red), name, qty+unit, "Used it" quick-delete button (calls DELETE API optimistically), pencil edit button | PantryGroup.tsx | 3 | ✅ |
-| `components/pantry/AddPantryItemSheet.tsx` | Bottom sheet for add/edit — unit suggestion chips, category grid picker, date fields, notes. Edit mode shows delete button. Escape key + backdrop click close. | app/pantry/page.tsx | 3 | ✅ |
+| `components/pantry/AddPantryItemSheet.tsx` | Bottom sheet for add/edit — unit suggestion chips, category grid picker, date fields, notes. Edit mode shows delete button. Escape key + backdrop click close. Rendered via `createPortal(jsx, document.body)` to escape any ancestor `transform` containing block. | app/pantry/page.tsx | 3 | ✅ |
 
 #### Planner Components (Phase 4+)
 | File | Purpose | Used By | Phase | Status |

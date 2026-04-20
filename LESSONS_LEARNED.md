@@ -218,6 +218,17 @@ const filtered = prev.filter((l) => l.id !== newList.id && l.week_start_date !==
 
 ---
 
+## Lesson 20: CSS `transform` on a parent breaks `fixed` positioning for all descendants
+
+**Date**: 2026-04-19
+**What broke**: `AddPantryItemSheet` uses `fixed inset-x-0 bottom-0`. PageShell's inner div has `animate-fade-in-up` with `animation-fill-mode: forwards`. The keyframe ends with `transform: translateY(0)`. Even though `translateY(0)` is visually a no-op, it is NOT the same as `transform: none` — it still creates a new CSS containing block. Result: the sheet's `bottom: 0` anchored to PageShell's content bottom (~400px into page) instead of the viewport bottom. The sheet extended ~200px above the viewport, hiding the name/header fields.
+
+**Fix**: Render the sheet via `createPortal(jsx, document.body)`. The portal renders the sheet as a direct child of `<body>`, which has no transform, so `fixed bottom: 0` correctly anchors to the viewport.
+
+**Remember**: **Any element with `transform`, `filter`, `perspective`, `will-change: transform`, or `contain: paint/layout/strict` creates a new containing block for `fixed` descendants.** This includes `transform: translateY(0)` from animation fill-mode. Bottom sheets, modals, tooltips, and dropdowns that use `position: fixed` MUST be rendered via `createPortal(jsx, document.body)` if any ancestor might have a transform — including from CSS animations.
+
+---
+
 ## Lesson 8: Optimistic-delete quick actions must call the API, not just update local state (Phase 3)
 **Date**: 2026-04-17
 **What broke**: The "Used it" quick-delete button in `PantryItem` called `onDelete(item.id)` which mapped to `handleDelete` in the page — which only filtered local state. Item disappeared from the UI but came back on page reload because no DELETE API call was made.
