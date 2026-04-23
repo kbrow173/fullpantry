@@ -1,12 +1,25 @@
 "use client";
 
-import { CheckCircle2, Pencil } from "lucide-react";
+import { CheckCircle2, Pencil, Minus } from "lucide-react";
 import type { PantryItem as PantryItemType } from "@/lib/types";
+
+// Weight/volume units where decrementing by 1 is ambiguous
+const CONTINUOUS_UNITS = new Set([
+  "g", "kg", "mg", "ml", "l", "liter", "litre",
+  "oz", "lb", "lbs", "cup", "cups", "tbsp", "tsp",
+  "fl oz", "quart", "qt", "pint", "pt", "gallon", "gal",
+]);
+
+function isDiscrete(unit: string | null | undefined): boolean {
+  if (!unit) return true;
+  return !CONTINUOUS_UNITS.has(unit.toLowerCase().trim());
+}
 
 interface PantryItemProps {
   item: PantryItemType;
   onEdit: (item: PantryItemType) => void;
   onDelete: (id: string) => void;
+  onDecrement: (id: string) => void;
 }
 
 function getFreshnessInfo(purchasedDate: string | null): {
@@ -22,8 +35,9 @@ function getFreshnessInfo(purchasedDate: string | null): {
   return { label: "Check this", color: "red" };
 }
 
-export function PantryItem({ item, onEdit, onDelete }: PantryItemProps) {
+export function PantryItem({ item, onEdit, onDelete, onDecrement }: PantryItemProps) {
   const freshness = getFreshnessInfo(item.purchased_date);
+  const discrete = isDiscrete(item.unit);
 
   const qtyDisplay = [
     item.quantity !== 1 || item.unit ? item.quantity : null,
@@ -79,15 +93,28 @@ export function PantryItem({ item, onEdit, onDelete }: PantryItemProps) {
         >
           <Pencil size={13} />
         </button>
-        <button
-          onClick={() => onDelete(item.id)}
-          className="flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-medium text-fp-text-muted hover:text-fp-success hover:bg-fp-success-bg transition-colors"
-          aria-label="Mark as used"
-          title="Used it all"
-        >
-          <CheckCircle2 size={13} />
-          <span className="hidden sm:inline">Used it</span>
-        </button>
+
+        {discrete ? (
+          <button
+            onClick={() => onDecrement(item.id)}
+            className="flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-medium text-fp-text-muted hover:text-fp-accent hover:bg-fp-accent-bg transition-colors"
+            aria-label="Use one"
+            title="Use 1"
+          >
+            <Minus size={13} />
+            <span className="hidden sm:inline">Use 1</span>
+          </button>
+        ) : (
+          <button
+            onClick={() => onDelete(item.id)}
+            className="flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-medium text-fp-text-muted hover:text-fp-success hover:bg-fp-success-bg transition-colors"
+            aria-label="Mark as used"
+            title="Used it all"
+          >
+            <CheckCircle2 size={13} />
+            <span className="hidden sm:inline">Used it</span>
+          </button>
+        )}
       </div>
     </div>
   );

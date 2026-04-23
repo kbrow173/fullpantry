@@ -30,15 +30,7 @@
 
 ---
 
-## Phase 1 — Recipes Core ⏳ NOT STARTED
-Next: Full recipe CRUD, recipe cards, search/filter, serving size adjuster
-
-## Phase 2 — Recipe Import ⏳ NOT STARTED
-## Phase 3 — Pantry ⏳ NOT STARTED
-## Phase 4 — Meal Planner ⏳ NOT STARTED
-## Phase 5 — Grocery List ⏳ NOT STARTED
-## Phase 6 — AI Smart Features ⏳ NOT STARTED
-## Phase 7 — Polish & Deploy ⏳ NOT STARTED
+## Phases 1–7 — See completed sections below
 
 ### Design polish (2026-04-15)
 User feedback after Phase 0 test: "looks INSANELY AI Vibe coded." Full anti-vibe-code redesign pass:
@@ -251,5 +243,21 @@ User feedback after Phase 0 test: "looks INSANELY AI Vibe coded." Full anti-vibe
 
 ---
 
-## Phase 6 — AI Smart Features ⏳ NOT STARTED
-## Phase 7 — Polish & Deploy ⏳ NOT STARTED
+## Phase 8 — Friction Reduction Pass 🔄 IN PROGRESS
+**Started**: 2026-04-22
+
+Six sub-phases targeting the friction that keeps the app from being used daily. See `plan.md` for full detail.
+
+- **8.1** Seed recipe library (25 recipes: Weissman / Babish / Hazan / staples) — `lib/seed-recipes/` JSON + `/recipes/library` browser
+- **8.2** Pantry quick-decrement ✅ — "Use 1" button on discrete items, "Used it" on continuous, 4s undo toast on auto-delete. All 18 tests passed. Functional updater pattern fixes rapid-tap stale closure.
+- **8.3** "Cook this" flow — `CookConfirmSheet` pre-fills from pantry, atomic decrement, `meal_plans.cooked_at` schema add
+- **8.4** Paste-a-recipe tab inside `ImportModal` → Gemini free-form parse → existing hydration path
+- **8.5** Leftover-aware banner on Planner — expiring pantry items → filtered recipe search
+- **8.6** Gentle planning nudge — Fri/Sat/Sun banner when current week has <3 dinners planned
+
+**Implementation order**: 8.2 → 8.3 → 8.1 → 8.4 → 8.5 → 8.6
+
+**Deferred to Phase 9**: AI "Plan my week" one-tap draft, rolling daily planner, easy-weeknight tags.
+
+## Phase 9 — AI Plan My Week ⏳ NOT STARTED
+## Phase 10 — Polish & Deploy (v2) ⏳ NOT STARTED

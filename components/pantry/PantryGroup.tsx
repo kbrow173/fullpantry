@@ -7,9 +7,10 @@ interface PantryGroupProps {
   items: PantryItemType[];
   onEdit: (item: PantryItemType) => void;
   onDelete: (id: string) => void;
+  onDecrement: (id: string) => void;
 }
 
-export function PantryGroup({ category, items, onEdit, onDelete }: PantryGroupProps) {
+export function PantryGroup({ category, items, onEdit, onDelete, onDecrement }: PantryGroupProps) {
   const meta = PANTRY_CATEGORIES.find((c) => c.value === category);
   if (!meta || items.length === 0) return null;
 
@@ -34,6 +35,7 @@ export function PantryGroup({ category, items, onEdit, onDelete }: PantryGroupPr
             item={item}
             onEdit={onEdit}
             onDelete={onDelete}
+            onDecrement={onDecrement}
           />
         ))}
       </div>

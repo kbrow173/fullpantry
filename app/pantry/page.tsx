@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { Plus, Package, Search, X } from "lucide-react";
 import { PageShell } from "@/components/layout/PageShell";
 import { PageHeader } from "@/components/layout/PageHeader";
@@ -17,6 +17,11 @@ export default function PantryPage() {
   const [search, setSearch] = useState("");
   const [sheetOpen, setSheetOpen] = useState(false);
   const [editItem, setEditItem] = useState<PantryItem | null>(null);
+  const [undoToast, setUndoToast] = useState<PantryItem | null>(null);
+  const undoTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Always-current ref so rapid taps read the latest qty, not a stale closure
+  const itemsRef = useRef<PantryItem[]>([]);
+  itemsRef.current = items;
 
   // Load pantry items on mount
   useEffect(() => {
@@ -25,6 +30,15 @@ export default function PantryPage() {
       .then((data: unknown) => setItems(Array.isArray(data) ? (data as PantryItem[]) : []))
       .catch(() => setItems([]))
       .finally(() => setLoading(false));
+  }, []);
+
+  // Commit any pending undo-delete when the page unmounts
+  useEffect(() => {
+    return () => {
+      if (undoTimerRef.current) {
+        clearTimeout(undoTimerRef.current);
+      }
+    };
   }, []);
 
   // Filtered items based on search
@@ -72,12 +86,73 @@ export default function PantryPage() {
   }
 
   async function handleQuickDelete(id: string) {
-    // Optimistically remove, then confirm with API
     setItems((prev) => prev.filter((i) => i.id !== id));
     try {
       await fetch(`/api/pantry/${id}`, { method: "DELETE" });
     } catch {
       // Silently ignore — item already removed from UI
+    }
+  }
+
+  function showUndoToast(item: PantryItem) {
+    // Clear any existing undo window — commit that pending delete immediately
+    if (undoTimerRef.current) {
+      clearTimeout(undoTimerRef.current);
+      if (undoToast) {
+        fetch(`/api/pantry/${undoToast.id}`, { method: "DELETE" }).catch(() => {});
+      }
+    }
+    setUndoToast(item);
+    undoTimerRef.current = setTimeout(() => {
+      fetch(`/api/pantry/${item.id}`, { method: "DELETE" }).catch(() => {});
+      setUndoToast(null);
+      undoTimerRef.current = null;
+    }, 4000);
+  }
+
+  function handleUndo() {
+    if (!undoToast) return;
+    if (undoTimerRef.current) {
+      clearTimeout(undoTimerRef.current);
+      undoTimerRef.current = null;
+    }
+    setItems((prev) => [...prev, undoToast]);
+    setUndoToast(null);
+  }
+
+  async function handleDecrement(id: string) {
+    // Capture item + newQty from inside the functional updater so rapid taps
+    // each see the already-decremented state, not a stale closure value.
+    let capturedItem: PantryItem | undefined;
+    let capturedNewQty = 0;
+
+    setItems((prev) => {
+      const item = prev.find((i) => i.id === id);
+      if (!item) return prev;
+      const newQty = item.quantity - 1;
+      capturedItem = item;
+      capturedNewQty = newQty;
+      if (newQty <= 0) return prev.filter((i) => i.id !== id);
+      return prev.map((i) => (i.id === id ? { ...i, quantity: newQty } : i));
+    });
+
+    if (!capturedItem) return;
+
+    if (capturedNewQty <= 0) {
+      showUndoToast(capturedItem);
+    } else {
+      try {
+        await fetch(`/api/pantry/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ quantity: capturedNewQty }),
+        });
+      } catch {
+        const originalQty = capturedItem.quantity;
+        setItems((prev) =>
+          prev.map((i) => (i.id === id ? { ...i, quantity: originalQty } : i))
+        );
+      }
     }
   }
 
@@ -170,6 +245,7 @@ export default function PantryPage() {
                 items={catItems}
                 onEdit={openEditSheet}
                 onDelete={handleQuickDelete}
+                onDecrement={handleDecrement}
               />
             ))}
           </div>
@@ -195,6 +271,21 @@ export default function PantryPage() {
         >
           <Plus size={22} />
         </button>
+      )}
+
+      {/* Undo toast */}
+      {undoToast && (
+        <div className="fixed bottom-28 left-4 right-4 z-50 flex items-center justify-between bg-fp-text text-fp-text-inverse px-4 py-3 rounded-xl shadow-lg animate-slide-up">
+          <span className="text-sm">
+            Removed <span className="font-semibold">{undoToast.name}</span>
+          </span>
+          <button
+            onClick={handleUndo}
+            className="text-sm font-semibold text-fp-accent-light ml-4 hover:opacity-80 transition-opacity"
+          >
+            Undo
+          </button>
+        </div>
       )}
     </PageShell>
   );
