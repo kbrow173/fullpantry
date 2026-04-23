@@ -14,8 +14,10 @@ const nextConfig: NextConfig = {
     staleTimes: { dynamic: 0 },
   },
   turbopack: {
-    // Explicit root prevents false workspace detection from multiple lockfiles
-    root: path.resolve(__dirname),
+    // In a git worktree the node_modules junction points to the parent repo,
+    // which is outside the worktree dir. Setting root to the repo root keeps
+    // both source files and node_modules within Turbopack's filesystem boundary.
+    root: process.env.TURBOPACK_ROOT ?? path.resolve(__dirname),
   },
   images: {
     remotePatterns: [

@@ -229,6 +229,43 @@ const filtered = prev.filter((l) => l.id !== newList.id && l.week_start_date !==
 
 ---
 
+## Lesson 22: Use functional state updater to fix stale closure in rapid event handlers (Phase 8)
+**Date**: 2026-04-22
+**What broke**: Rapid double-taps on "Use 1" only decremented qty by 1 instead of 2. Both click handlers closed over the same stale `items` state snapshot before React re-rendered, so both computed the same `newQty`.
+
+**What didn't work**: Storing latest items in a `useRef` — the ref is only updated during render, so synchronous clicks before any re-render still see the same ref value.
+
+**The fix**: Read the item and compute `newQty` inside `setItems(prev => ...)`. React's functional updater always receives the true latest committed state — even across multiple same-tick calls. Capture `capturedItem` and `capturedNewQty` from inside the updater (it runs synchronously), then use those values for the async API call.
+
+```ts
+setItems((prev) => {
+  const item = prev.find(i => i.id === id);
+  capturedItem = item;
+  capturedNewQty = item.quantity - 1;
+  ...
+});
+```
+
+**Remember**: Any event handler that reads state AND updates state in the same call is vulnerable to stale closures under rapid firing. The fix is always the functional updater pattern — never read state directly in the handler body if you need the "latest" value across multiple rapid calls.
+
+---
+
+## Lesson 21: Git worktrees need node_modules and .env.local manually set up (Phase 8)
+**Date**: 2026-04-22
+**What broke**: Claude Code git worktrees contain only source files — no `node_modules`, no `.env.local`. Trying to run the dev server failed with Turbopack panicking over missing `next` package. Symlinking `node_modules` from the parent project then caused Turbopack to panic ("symlink points out of filesystem root") because the junction pointed outside the worktree directory.
+
+**Fix**:
+1. Set `TURBOPACK_ROOT` env var in `.claude/launch.json` pointing to the parent project root (`C:\Users\keega\Projects\fullpantry`). This makes Turbopack's filesystem boundary large enough to include the symlinked `node_modules`.
+2. Update `next.config.ts` to use `process.env.TURBOPACK_ROOT ?? path.resolve(__dirname)` so the env var can override the default.
+3. Copy `.env.local` from parent project to worktree (it's gitignored, won't be included automatically).
+
+**Remember**:
+- **Worktrees are bare checkouts** — dependencies and secrets don't transfer. Always set up both before running a dev server from a worktree.
+- **Turbopack's filesystem root** determines which symlinks are valid. Symlinks pointing outside the root cause a hard panic. Set `TURBOPACK_ROOT` to the parent repo when using worktrees with shared `node_modules`.
+- **Pattern for worktree dev**: junction `node_modules` → parent, set `TURBOPACK_ROOT`, copy `.env.local`.
+
+---
+
 ## Lesson 8: Optimistic-delete quick actions must call the API, not just update local state (Phase 3)
 **Date**: 2026-04-17
 **What broke**: The "Used it" quick-delete button in `PantryItem` called `onDelete(item.id)` which mapped to `handleDelete` in the page — which only filtered local state. Item disappeared from the UI but came back on page reload because no DELETE API call was made.

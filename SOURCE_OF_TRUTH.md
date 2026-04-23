@@ -17,6 +17,7 @@
 | 5 | Grocery List | ✅ Complete |
 | 6 | AI Smart Features | ✅ Complete |
 | 7 | Polish & Deploy | ✅ Complete |
+| 8 | Friction Reduction | 🔄 In Progress (8.2 done) |
 
 ---
 
@@ -82,7 +83,7 @@
 | `app/recipes/[id]/edit/page.tsx` | `/recipes/[id]/edit` | Edit existing recipe | 1 |
 | `app/recipes/new/page.tsx` | `/recipes/new` | Create new recipe. Client component — reads `sessionStorage.fp_import_draft` on `?from=import` to pre-populate form with imported data. | 1/2 | ✅ |
 | `app/planner/page.tsx` | `/planner` | Weekly meal planner — client component. Manages weekStart, selectedDay, mealsByDate, pickerTarget. Fetches plans per week, recipes once. Optimistic delete with rollback. | 4 | ✅ |
-| `app/pantry/page.tsx` | `/pantry` | Pantry inventory (shell in P0, full in P3) | 0 | ✅ |
+| `app/pantry/page.tsx` | `/pantry` | Pantry inventory. Phase 8.2: added handleDecrement (qty−1 with undo toast), showUndoToast/handleUndo with 4s delayed DELETE, unmount cleanup. | 0/3/8 | ✅ |
 | `app/groceries/page.tsx` | `/groceries` | Grocery list — client component. Manages lists/activeId state. Generate button, list tabs, collapsible sections, check→pantry sheet, manual add FAB. | 5 | ✅ |
 
 #### API Routes
@@ -142,8 +143,8 @@
 #### Pantry Components (Phase 3+)
 | File | Purpose | Used By | Phase | Status |
 |------|---------|---------|-------|--------|
-| `components/pantry/PantryGroup.tsx` | Category section header (icon + label + count) with list of PantryItem rows | app/pantry/page.tsx | 3 | ✅ |
-| `components/pantry/PantryItem.tsx` | Single pantry item row — freshness dot (green/amber/red), name, qty+unit, "Used it" quick-delete button (calls DELETE API optimistically), pencil edit button | PantryGroup.tsx | 3 | ✅ |
+| `components/pantry/PantryGroup.tsx` | Category section header (icon + label + count) with list of PantryItem rows. Threads onDecrement prop. | app/pantry/page.tsx | 3/8 | ✅ |
+| `components/pantry/PantryItem.tsx` | Single pantry item row — freshness dot, name, qty+unit, pencil edit. Discrete units (no unit/countable): "Use 1" minus button (onDecrement). Continuous units (g/ml/oz/lb/cups): "Used it" delete button (onDelete). | PantryGroup.tsx | 3/8 | ✅ |
 | `components/pantry/AddPantryItemSheet.tsx` | Bottom sheet for add/edit — unit suggestion chips, category grid picker, date fields, notes. Edit mode shows delete button. Escape key + backdrop click close. Rendered via `createPortal(jsx, document.body)` to escape any ancestor `transform` containing block. | app/pantry/page.tsx | 3 | ✅ |
 
 #### Planner Components (Phase 4+)
@@ -276,5 +277,6 @@ GEMINI_API_KEY=<from Google AI Studio>
 | 2026-04-17 | Phase 3 implementation complete (awaiting user testing). lib/units.ts, supabase/migrations/002_pantry.sql, app/api/pantry/route.ts, app/api/pantry/[id]/route.ts, PantryGroup.tsx, PantryItem.tsx, AddPantryItemSheet.tsx created. app/pantry/page.tsx rewritten as full client component. Edge case fix: "Used it" quick action now calls DELETE API (was only removing from local state). | 3 |
 | 2026-04-17 | Phase 4 implementation complete (awaiting user testing + SQL migration). supabase/migrations/003_meal_planner.sql, app/api/planner/route.ts, app/api/planner/[id]/route.ts, WeekGrid.tsx, MealSlotCard.tsx, DayMeals.tsx, RecipePickerScreen.tsx created. app/planner/page.tsx rewritten as full client component. Edge cases fixed: toISODate timezone bug (UTC→local), stale today const moved inside component, DELETE optimistic rollback, null meal validation in API, servings preserved on edit, error feedback on save failure. | 4 |
 | 2026-04-18 | Phase 7 complete. SideNav.tsx + OfflineBanner.tsx created. BottomNav hidden on lg+. PageShell gets fade-in + max-w-3xl. RecipeCard gets card-hover. RecipeGrid gets stagger. All bottom sheets get animate-slide-up. FAB gets fab-pulse. globals.css gets scalePop/slideUp/fabPulse/card-hover keyframes. error.tsx + not-found.tsx added. manifest.json updated with shortcuts. Icons generated from user logo (512→192→apple-touch). 3 Edge Case Destroyer bugs fixed. | 7 |
+| 2026-04-22 | Phase 8.2 complete. PantryItem: discrete units get "Use 1" minus button, continuous get "Used it" delete. PantryGroup: onDecrement threaded. pantry/page.tsx: handleDecrement, showUndoToast (4s delayed DELETE), handleUndo, unmount cleanup useEffect. LESSONS_LEARNED #21 (worktree setup). | 8 |
 | 2026-04-17 | Phase 6 complete. lib/gemini.ts extended with categorizeGroceryItems + suggestMealPlan. app/api/planner/suggest/route.ts + app/api/recipes/can-make/route.ts created. SuggestedMealsSheet.tsx created. app/planner/page.tsx updated with "Suggest meals" button. RecipeGrid.tsx updated with "Can Make" pill + status badges. app/api/groceries/generate/route.ts updated with Gemini fallback categorization. | 6 |
 | 2026-04-17 | Phase 5 complete. supabase/migrations/004_grocery_list.sql, lib/grocery.ts, app/api/groceries/* (5 routes), app/groceries/page.tsx, 5 grocery components created. lib/types.ts updated with GroceryList, GroceryItem, GROCERY_CATEGORIES, GroceryCategory. 5 bugs fixed during testing: categorization false positives (word-boundary regex), duplicate list on regenerate (same-week detection), sheet hidden behind nav (z-index + pb fix), prep notes leaking into item names (cleanDisplayName). 3-list cap, pantry subtraction, 7-day window, per-item check→pantry flow all working. | 5 |

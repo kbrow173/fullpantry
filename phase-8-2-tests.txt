@@ -1,0 +1,98 @@
+FullPantry — Phase 8.2 Test Checklist: Pantry Quick-Decrement
+==============================================================
+Test on your phone at https://fullpantry.vercel.app/pantry
+(or local dev server if deployed changes aren't live yet)
+
+SETUP: Make sure you have a few pantry items of different types:
+  - An egg or item with no unit (discrete)
+  - An item with a countable unit like "slices", "cans", "cloves" (discrete)
+  - An item with oz, lb, g, ml, or cups (continuous)
+
+--------------------------------------------------------------
+SECTION 1: Button appearance
+--------------------------------------------------------------
+1. Open /pantry. Verify items with NO unit or countable units
+   (eggs, bread, lemons, etc.) show a "−" (minus) button on the right.
+   Expected: minus icon + "Use 1" label (label hidden on small screens)
+
+2. Verify items with weight/volume units (lb, oz, g, ml, cups, tbsp, tsp)
+   show a checkmark "Used it" button instead of the minus button.
+   Expected: checkmark icon + "Used it" label
+
+3. Verify the pencil (edit) button is still present on ALL items.
+   Expected: pencil icon visible for every row
+
+--------------------------------------------------------------
+SECTION 2: Decrement — quantity stays above 0
+--------------------------------------------------------------
+4. Find an item with qty ≥ 3 and a discrete unit (e.g. 3 limes or 5 eggs).
+   Tap "Use 1" once.
+   Expected: quantity decreases by 1 immediately (no sheet opens, no confirmation)
+
+5. Tap "Use 1" again on the same item.
+   Expected: quantity decreases by 1 again. Item still visible in list.
+
+6. Hard-refresh the page (pull-to-refresh or reload URL).
+   Expected: the decremented quantity persists — it was saved to the database.
+
+--------------------------------------------------------------
+SECTION 3: Decrement to zero — auto-delete + undo toast
+--------------------------------------------------------------
+7. Find an item with qty = 1 and a discrete unit (e.g. 1 lemon).
+   Tap "Use 1".
+   Expected: item disappears from the list immediately.
+
+8. Immediately after step 7, a dark toast appears at the bottom of the screen:
+   "Removed [item name]"  [Undo]
+   Expected: toast visible within 1 second of tap, shows correct item name.
+
+9. Do NOT tap Undo. Wait 4–5 seconds.
+   Expected: toast dismisses on its own. Item is gone permanently.
+
+10. Hard-refresh the page.
+    Expected: the removed item does NOT reappear (it was deleted from DB).
+
+--------------------------------------------------------------
+SECTION 4: Undo
+--------------------------------------------------------------
+11. Find an item with qty = 1 and a discrete unit. Tap "Use 1".
+    Expected: item disappears, undo toast appears.
+
+12. Within 4 seconds, tap "Undo" in the toast.
+    Expected: item reappears in the correct category group.
+    Item count in header increases by 1.
+
+13. Hard-refresh the page.
+    Expected: the restored item is still there (undo prevented the DELETE).
+
+--------------------------------------------------------------
+SECTION 5: Continuous units are unaffected
+--------------------------------------------------------------
+14. Find an item with a continuous unit (e.g. 1 lb chicken breast).
+    Verify it does NOT have a "Use 1" / minus button.
+    Expected: only the pencil and "Used it" (checkmark) buttons visible.
+
+15. Tap "Used it" on the continuous-unit item.
+    Expected: item is immediately removed (no undo toast — this is the old
+    "Used it" full-delete behavior, unchanged).
+
+--------------------------------------------------------------
+SECTION 6: Edge cases
+--------------------------------------------------------------
+16. Find or create an item with qty = 2. Tap "Use 1" twice in quick succession.
+    Expected: qty reaches 0 and auto-deletes. Undo toast appears.
+    Note: rapid taps are handled correctly — each tap reads the latest qty.
+
+17. Trigger an undo toast (tap "Use 1" on a qty=1 item), then before tapping
+    Undo, tap "Use 1" on a DIFFERENT qty=1 item.
+    Expected: the second item also triggers an undo toast. The first toast is
+    replaced. The first item is committed to deletion.
+
+18. Trigger an undo toast, then navigate to /recipes using the bottom nav.
+    Come back to /pantry.
+    Expected: the item is still in the pantry (the timer was cancelled on
+    navigate — safe behavior, no accidental delete).
+
+--------------------------------------------------------------
+DONE
+All 18 checks passed? Phase 8.2 is complete. ✅

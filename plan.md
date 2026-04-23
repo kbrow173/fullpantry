@@ -10,8 +10,86 @@
 | 3 | Pantry | Pantry data model, CRUD, inventory view, categories | Phase 0 |
 | 4 | Meal Planner | Weekly calendar, B/L/D/Snack slots, recipe assignment | Phases 1, 3 |
 | 5 | Grocery List | Auto-generate from meal plan - pantry, store section grouping | Phases 3, 4 |
-| 6 | AI Smart Features | "Plan my week", pantry-based suggestions, smart categorization | Phases 1-5 |
-| 7 | Polish & Deploy | Animations, transitions, final PWA tuning, Vercel deploy | All |
+| 6 | AI Smart Features | "Plan my week", pantry-based suggestions, smart categorization | Phases 1-5 | ✅ Complete |
+| 7 | Polish & Deploy | Animations, transitions, final PWA tuning, Vercel deploy | All | ✅ Complete |
+| 8 | Friction Reduction | Seed library, quick-decrement, cook-this flow, paste-recipe, leftover nudges, planning nudge | Phases 1-7 |
+| 9 | AI Plan My Week | One-tap weekly meal draft from Gemini using recipes + pantry + history | Phase 8 |
+
+---
+
+## Phase 8 — Friction Reduction Pass
+**Goal**: Remove the friction points that keep the app from being used daily. Planning feels hard, pantry edits are tedious, and there's no quick way to bring outside recipes in.
+
+**Implementation order**: 8.2 → 8.3 → 8.1 → 8.4 → 8.5 → 8.6 (quick wins first; seed library lands after cook-flow so seeded recipes can be cooked immediately).
+
+### 8.1 — Seed Recipe Library
+**Goal**: 25 curated recipes browseable on first launch so the app isn't empty.
+
+- Storage: JSON files in `lib/seed-recipes/` (no DB cost, versioned in git, per-user "copy" on tap)
+- Mix: ~8 Joshua Weissman, ~6 Binging with Babish, ~6 Marcella Hazan, ~5 staples (roast chicken, carbonara, chili, weeknight stir-fry, chicken soup)
+- Route: `/recipes/library` — grid view, filter by source/category, "Add to my recipes" button copies row to user's `recipes` + `recipe_ingredients` + `recipe_instructions`
+- Attribution: source name + URL preserved on each card and on the copied recipe
+- Entry points: link from `/recipes` empty state AND from recipe header overflow menu
+
+### 8.2 — Pantry Quick-Decrement
+**Goal**: Drop a unit from a pantry item in one tap.
+
+- `−1` button on each `PantryItem` row (inline, replaces no existing action)
+- Discrete units (eggs, cans, bottles, item with no unit) → `−1` quick button
+- Continuous units (g, ml, oz, cups, lbs) → long-press opens custom-amount sheet; short tap does nothing (prevents ambiguous single-gram decrement)
+- Hitting qty `0` → auto-delete with 4s undo toast (restores row)
+- Optimistic local update, API call in background, rollback on error
+
+### 8.3 — "Cook This" Confirmation Flow
+**Goal**: Marking a planned meal as made deducts from pantry automatically.
+
+- New action on `MealSlotCard` (filled state): "Mark as made"
+- Opens `CookConfirmSheet`: lists recipe ingredients with fuzzy-matched pantry quantities pre-filled (editable steppers)
+- Ingredients with no pantry match render as "(not in pantry — skip)"
+- Confirm → atomic pantry decrement (single transaction), meal plan slot marked `cooked_at` timestamp
+- Cooked slot renders with checkmark + muted background (visual state change)
+- Schema: `meal_plans.cooked_at TIMESTAMPTZ NULL` added via migration `005_cooked_at.sql`
+
+### 8.4 — Paste-a-Recipe from Chat
+**Goal**: Copy a recipe out of a Claude conversation and land it in FullPantry in under 10 seconds.
+
+- New tab inside existing `ImportModal`: "From URL" | "Paste text"
+- Paste textarea → POST `/api/import/paste` → Gemini parses free-form text into `ImportedRecipe` shape → sessionStorage handoff → `/recipes/new?from=import`
+- Reuses existing `RecipeForm` hydration path (no new form needed)
+- No input length cap (per user decision)
+- Graceful error if Gemini can't extract required fields (title + at least 1 ingredient)
+
+### 8.5 — Leftover-Aware Nudges
+**Goal**: Surface expiring pantry items on the Planner so food doesn't get wasted.
+
+- On `/planner` load: compute pantry items where `expiry_date` is within 3 days
+- If any found → soft banner at top: "X, Y, Z expiring soon" + "Find recipes" button
+- Button navigates to `/recipes?uses=<ingredient-list>` — recipe grid filtered to recipes whose ingredient names fuzzy-match any expiring item
+- Fuzzy match: lowercase + trim + substring match (same logic as `subtractPantry`)
+- Banner dismissable per-session (sessionStorage key)
+
+### 8.6 — Gentle Planning Nudge
+**Goal**: Make the user feel a pull toward planning without being pushy.
+
+- On `/planner` load: count filled dinner slots for current week
+- If <3 dinners planned AND today is Fri/Sat/Sun → show soft banner: "Plan this week in under a minute?"
+- Dismissable per-week (localStorage key: `nudge-dismissed-<week-start>`)
+- No push notifications, no streaks, no gamification
+- Tapping the banner currently just scrolls to today's dinner slot (Phase 7's "Plan my week" will wire it to the AI draft)
+
+### Deliverables
+- 6 sub-phases, each shippable independently
+- New migration: `005_cooked_at.sql`
+- New API routes: `/api/import/paste`, `/api/meal-plans/[id]/cook`
+- New components: `CookConfirmSheet`, `PasteRecipeTab`, `ExpiringBanner`, `PlanningNudge`
+- Updated: `PantryItem`, `MealSlotCard`, `ImportModal`, recipes empty state
+- Each sub-phase runs full Commandments workflow (Edge Case Destroyer → test checklist → docs)
+
+### Scope explicitly deferred to Phase 9
+- AI "Plan my week" (one-tap weekly draft)
+- Rolling daily planner
+- "Easy weeknight" meal tags with auto-fill
+- Streaks / reminders beyond the Fri-Sun nudge
 
 ---
 
